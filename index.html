@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<meta name="theme-color" content="#07101a">
+<title>Silicon Lab</title>
+<style>
+:root{
+ --bg:#060a12;--panel:#0b1321;--panel2:#0e192b;--line:#1e2e47;--line2:#2a405f;
+ --text:#edf5ff;--muted:#8da4c6;--cyan:#64e3f5;--violet:#ae8cff;--green:#45d6a2;
+ --amber:#f6c966;--red:#fb7185;--electron:#59dcff;--hole:#ffb45f;--ion:#d9b1ff
+}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 15% -8%,#12294b 0,transparent 34%),radial-gradient(circle at 100% 0,#22144a 0,transparent 31%),var(--bg);color:var(--text);font-family:Inter,ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+body{padding:12px}button,input{font:inherit}.app{max-width:1540px;margin:auto}.app-header{display:flex;justify-content:space-between;gap:12px;align-items:end;flex-wrap:wrap;margin-bottom:9px}.app-header h1{margin:0;font-size:clamp(22px,4vw,34px)}.app-header h1 span{color:var(--cyan)}.app-header p{margin:3px 0 0;color:var(--muted);font-size:12px}.header-badges{display:flex;gap:6px;flex-wrap:wrap}.header-badges span{font-size:10px;padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:#08111dcc;color:#9fb2cf}
+.mode-tabs{display:flex;gap:6px;margin-bottom:9px;overflow:auto;padding-bottom:1px}.mode-tab{border:1px solid var(--line);background:#0b1423;color:#9fb1cc;padding:8px 12px;border-radius:10px;cursor:pointer;white-space:nowrap;font-weight:700;font-size:12px}.mode-tab.active{background:#12304a;color:#bdf7ff;border-color:#3b8190;box-shadow:0 0 0 1px #64e3f522 inset}
+.layout{display:grid;grid-template-columns:minmax(0,1.72fr) minmax(330px,.78fr);gap:10px}@media(max-width:1040px){.layout{grid-template-columns:1fr}}.card{background:linear-gradient(180deg,#0d1728f4,#09111ef4);border:1px solid var(--line);border-radius:17px;overflow:hidden;box-shadow:0 22px 75px #0008}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:7px;padding:8px 10px;border-bottom:1px solid var(--line);flex-wrap:wrap}.toolbar-group{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.btn{border:1px solid #263a56;background:#101a2c;color:#dce8fa;padding:7px 9px;border-radius:9px;cursor:pointer;font-size:11px;touch-action:manipulation}.btn:hover{background:#15243b;border-color:#3e5a82}.btn.active{color:var(--cyan);border-color:#4fbfd1;box-shadow:0 0 0 1px #64e3f533 inset}.btn.good{color:#a8f3d4;border-color:#22664f;background:#0d2a22}.btn.warn{color:#ffe2a0;border-color:#715221;background:#30230f}.btn.icon{min-width:38px}.sim-mode{font-size:10px;font-weight:800;letter-spacing:.08em;padding:6px 8px;border-radius:8px;background:#13382c;color:#a9f3d2}.sim-mode.warn{background:#3a2b0e;color:#ffe1a0}.sim-mode.fail{background:#46151f;color:#ffc5cf}
+.viewport{position:relative;background:#040810;overflow:hidden;touch-action:none;cursor:grab;overscroll-behavior:contain}.viewport.dragging{cursor:grabbing}.viewport canvas{display:block;width:100%;height:auto;aspect-ratio:16/6.2;min-height:300px;max-height:530px}.zoom-chip{position:absolute;right:9px;top:9px;background:#07101bdc;border:1px solid #223650;color:#b7c9df;padding:5px 7px;border-radius:8px;font-size:10px;pointer-events:none}.explain-callout{position:absolute;left:10px;top:10px;max-width:min(360px,70%);background:#07101bed;border:1px solid #355375;border-radius:11px;padding:8px 9px;box-shadow:0 10px 30px #0008;pointer-events:none}.explain-callout b{display:block;color:#e9f5ff;font-size:11px}.explain-callout span{display:block;color:#9db1cf;font-size:9px;margin-top:2px}
+.gesture-strip{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:7px 10px;background:#09121f;border-top:1px solid #17243a;border-bottom:1px solid var(--line);color:#8fa5c3;font-size:9px}.gesture-strip b{color:#c4d5eb}
+.metrics{display:grid;grid-template-columns:repeat(6,minmax(74px,1fr));gap:6px;padding:8px;background:#08111d}@media(max-width:720px){.metrics{grid-template-columns:repeat(3,1fr)}}.metric{padding:7px 8px;border:1px solid #1b2940;background:#0d1727;border-radius:10px;min-height:54px}.metric span{display:block;font-size:9px;text-transform:uppercase;letter-spacing:.07em;color:#7f95b5}.metric strong{display:block;font-size:15px;margin-top:2px}.metric small{display:block;font-size:8px;color:#7186a6;margin-top:1px}
+.timeline{padding:8px;border-top:1px solid var(--line);background:#07101b}.timeline-row{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.timeline-row+.timeline-row{margin-top:7px}#scrub{flex:1;min-width:160px}.time-read{font-size:10px;color:#a9bbd5;min-width:128px;font-variant-numeric:tabular-nums}.muted-label{font-size:9px;color:#7f94b4}#speedCtl{max-width:240px}.speed-chip{font-size:10px;color:var(--cyan);border:1px solid #26415b;border-radius:8px;padding:5px 7px}
+.side-card{padding:9px;max-height:calc(100vh - 112px);overflow:auto}@media(max-width:1040px){.side-card{max-height:none}}.mode-panel{display:none;border:1px solid #243753;background:#0b1728;border-radius:13px;padding:10px;margin-bottom:8px}.mode-panel.active{display:block}.panel-title{display:flex;align-items:center;justify-content:space-between;gap:8px}.panel-title h2{font-size:14px;margin:0}.panel-title span{font-size:9px;color:var(--cyan)}.mode-note{font-size:10px;line-height:1.4;color:#91a5c2;margin:7px 0 0}.section{border:1px solid #1b2940;background:#0a1422;border-radius:13px;padding:10px;margin-bottom:8px}.section h3,.skills-wrap h3{margin:0 0 8px;font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:#c9d9f0}
+.segmented{display:grid;grid-template-columns:1fr auto auto;gap:5px;align-items:center;font-size:10px;color:#a7b8d0}.seg{border:1px solid #283b57;background:#0e192a;color:#95a9c6;padding:6px 7px;border-radius:8px;cursor:pointer;font-size:9px}.seg.active{border-color:#4abfd0;color:#bdf7ff;background:#123148}.switch-row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:9px;padding-top:8px;border-top:1px solid #17263c}.switch-row span{display:flex;flex-direction:column;gap:2px;font-size:10px}.switch-row small{font-size:8px;color:#768aa9}.switch-row input{accent-color:#63dfef;transform:scale(1.1)}
+.presets{display:grid;grid-template-columns:1fr 1fr;gap:6px}.preset{text-align:left;line-height:1.15}.preset b{display:block;font-size:10px}.preset small{display:block;color:#788cab;font-size:8px;margin-top:2px}.ctrl{margin:9px 0}.ctrl-head{display:flex;justify-content:space-between;gap:7px;font-size:10px}.ctrl-head label{color:#c6d5ea}.ctrl-head output{color:var(--cyan);font-weight:700;font-variant-numeric:tabular-nums}input[type=range]{width:100%;accent-color:#62dff5;margin-top:5px}.control-section.task-highlight{box-shadow:0 0 0 1px #f6c96688 inset,0 0 20px #f6c96612}.ctrl.task-highlight{padding:6px;border-radius:9px;background:#3a2c1022;box-shadow:0 0 0 1px #f6c96655 inset}.reset-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}.reset-section>small{display:block;color:#7387a5;font-size:8px;line-height:1.35;margin-top:6px}
+.legend{display:flex;gap:9px;flex-wrap:wrap;font-size:9px;color:#9dafc9}.dot{display:inline-block;width:8px;height:8px;border-radius:50%;vertical-align:middle;margin-right:4px}.dot.electron{background:var(--electron);box-shadow:0 0 8px var(--electron)}.dot.hole{border:2px solid var(--hole)}.dot.ion{border-radius:2px;background:var(--ion)}.dot.recomb{background:white;box-shadow:0 0 8px #ff9060}.diagnostic{font-size:10px;line-height:1.45;color:#b9c9df;margin-top:8px}.diagnostic strong{color:#eef6ff}.cause-chain{font-size:9px;line-height:1.45;color:#aabbd3;margin-top:7px;padding:8px;border:1px solid #1c2b42;border-radius:9px;background:#07101a}.cause-chain .arr{color:var(--cyan);padding:0 3px}.failure-panel{margin-top:8px;padding:9px;border:1px solid #6b2735;border-radius:10px;background:#260e16}.failure-panel h4{margin:0 0 5px;color:#ffc3cc;font-size:11px}.failure-panel p{margin:0 0 7px;font-size:9px;line-height:1.4;color:#e1b7bd}.footnote{font-size:8px;line-height:1.4;color:#6e83a3;margin:3px 2px}
+.explain-card{margin-top:8px;border:1px solid #29415f;background:#08121f;border-radius:11px;padding:9px}.explain-card h3{margin:0 0 5px;color:#dcecff;font-size:12px}.explain-card p{margin:4px 0;color:#a9bbd3;font-size:9px;line-height:1.45}.explain-card ul{padding-left:17px;margin:6px 0}.explain-card li{font-size:9px;color:#a9bbd3;margin:3px 0}.context-value{color:var(--cyan);font-weight:700}.explain-tip{margin-top:7px;padding-top:6px;border-top:1px solid #1d2d44;color:#7f95b4!important}
+.difficulty-tabs{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin-top:8px}.difficulty{border:1px solid #273a56;background:#0d192a;color:#96aac7;padding:6px;border-radius:8px;cursor:pointer;font-size:9px}.difficulty.active{color:#bdf7ff;border-color:#42a8b9;background:#123047}.task-list{display:grid;gap:5px;margin-top:7px}.task-pick{border:1px solid #223650;background:#091421;border-radius:9px;padding:7px;text-align:left;color:#c6d6ea;cursor:pointer}.task-pick:hover{border-color:#3b587f}.task-pick b{display:block;font-size:10px}.task-pick small{display:block;font-size:8px;color:#788daa;margin-top:2px}.task-pick.done{border-color:#22664f;background:#0c251f}.task-active{margin-top:8px;padding:9px;border:1px solid #2d4665;background:#07121f;border-radius:11px}.task-head{display:flex;justify-content:space-between;gap:8px}.task-head strong{font-size:11px}.task-head span{font-size:8px;color:var(--cyan)}.task-active p{font-size:9px;line-height:1.4;color:#b1c2d9}.task-hint{font-size:9px;color:#f5d897;background:#302510;border:1px solid #5c4722;border-radius:8px;padding:7px;margin:6px 0}.task-hint:empty{display:none}.task-constraints{font-size:8px;color:#91a6c2;line-height:1.4}.task-actions{display:flex;gap:6px;margin-top:7px}.task-result{margin-top:7px;font-size:9px;line-height:1.45}.task-result.success{padding:8px;border:1px solid #28634f;background:#0d271f;border-radius:8px;color:#b5efd8}.task-result.fail{padding:8px;border:1px solid #654a28;background:#2d210f;border-radius:8px;color:#f1d5a2}.skills-wrap{margin-top:10px;padding-top:8px;border-top:1px solid #20324b}.skill-row{display:grid;grid-template-columns:110px 1fr 31px;gap:6px;align-items:center;margin:5px 0;font-size:8px;color:#9db0ca}.skill-track{height:6px;background:#121f31;border-radius:999px;overflow:hidden}.skill-fill{height:100%;background:linear-gradient(90deg,#4fbfd2,#a78bfa);border-radius:inherit;transition:width .35s}.skill-row em{font-style:normal;text-align:right;color:#b8c9de}
+@media(max-width:520px){body{padding:7px}.app-header{align-items:start}.header-badges{display:none}.toolbar{padding:7px}.btn{padding:7px 8px}.viewport canvas{min-height:270px;aspect-ratio:16/7.3}.gesture-strip{gap:7px;font-size:8px}.side-card{padding:7px}.mode-tabs{margin-bottom:7px}.mode-tab{padding:8px 9px}.metric strong{font-size:14px}.metrics{padding:6px;gap:4px}.metric{padding:6px;min-height:50px}}
+
+/* v0.4: learning UI, precise controls and mobile-safe interaction */
+.header-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}.help-btn{font-weight:800;border-color:#45637f;color:#dff7ff}.mode-tabs{order:0}
+.metric{appearance:none;text-align:left;color:inherit;font-family:inherit;cursor:pointer;width:100%;transition:.16s transform,.16s border-color,.16s background}.metric:hover,.metric:focus-visible{border-color:#3f6b88;background:#102039;outline:none}.metric:active{transform:scale(.985)}
+.ctrl-head{align-items:center}.ctrl-head small{color:#7086a6;font-size:8px}.precision-row{display:grid;grid-template-columns:38px minmax(74px,1fr) auto 38px;gap:5px;align-items:center;margin-top:5px}.step-btn{min-height:36px;border:1px solid #2a4665;border-radius:9px;background:#0e1c30;color:#cfeafb;font-size:19px;line-height:1;cursor:pointer}.step-btn:active{background:#17324a;color:#67e4f7}.precise-input{min-width:0;width:100%;min-height:36px;border:1px solid #27405e;border-radius:8px;background:#07101c;color:#e8f5ff;padding:7px 8px;font:700 12px ui-monospace,monospace;outline:none}.precise-input:focus{border-color:#58d8eb;box-shadow:0 0 0 2px #58d8eb22}.precision-row .unit{color:#7f96b8;font-size:9px;white-space:nowrap}.safe-range{position:relative;margin-top:3px;padding:4px 0}.safe-range input[type=range]{display:block;margin:0;width:100%}.touch-range{display:none;position:absolute;inset:-7px 0;z-index:3;touch-action:pan-y}.safe-range.grabbed input[type=range]{filter:drop-shadow(0 0 5px #61e4f5)}.safe-range.grabbed input[type=range]::-webkit-slider-thumb{transform:scale(1.16)}
+.sheet-backdrop{position:fixed;inset:0;background:#0009;z-index:1000;backdrop-filter:blur(3px)}.sheet-backdrop[hidden],.bottom-sheet[hidden]{display:none!important}.bottom-sheet{position:fixed;z-index:1001;left:50%;bottom:0;transform:translateX(-50%);width:min(760px,100%);max-height:min(82vh,900px);overflow:auto;background:linear-gradient(180deg,#0f1b2d,#07111e);border:1px solid #2a4260;border-bottom:0;border-radius:20px 20px 0 0;box-shadow:0 -24px 70px #000b;padding:8px 14px max(18px,env(safe-area-inset-bottom))}.sheet-handle{width:52px;height:4px;background:#526985;border-radius:99px;margin:0 auto 10px}.sheet-head{display:flex;justify-content:space-between;gap:12px;align-items:start;border-bottom:1px solid #20324b;padding-bottom:9px}.sheet-head small{color:#62dff5;font-size:9px;font-weight:800;letter-spacing:.12em}.sheet-head h2{font-size:18px;margin:2px 0 0}.sheet-close{border:1px solid #2b405b;background:#111d2e;color:#d9e6f7;border-radius:10px;width:38px;height:38px;font-size:24px;cursor:pointer}.sheet-body{padding:11px 1px 3px;color:#aebfd7;font-size:11px;line-height:1.55}.sheet-body h3{font-size:13px;color:#e4effc;margin:14px 0 5px}.sheet-body h3:first-child{margin-top:0}.sheet-body p{margin:5px 0}.sheet-body ul{padding-left:19px;margin:6px 0}.sheet-body li{margin:4px 0}.sheet-body .current-box{border:1px solid #2a455e;background:#081724;border-radius:11px;padding:9px;margin:10px 0}.sheet-body .current-box b{color:#72e7f6}.sheet-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.sheet-actions .btn{font-size:10px}.definition-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}.definition-card{border:1px solid #20334e;background:#091522;border-radius:10px;padding:8px}.definition-card b{display:block;color:#e5f0fd;margin-bottom:2px}.help-nav{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:8px}.help-nav button{border:1px solid #2b4663;background:#0a1827;color:#bdd0e7;border-radius:8px;padding:6px 8px;font-size:9px}.help-note{padding:8px;border-left:3px solid #5eddec;background:#0c1b29;border-radius:7px}.path-list{display:grid;gap:4px;margin-top:7px}.path-step{display:flex;gap:7px;align-items:flex-start}.path-step i{display:grid;place-items:center;flex:0 0 19px;height:19px;border:1px solid #32506d;border-radius:50%;color:#67e4f6;font-style:normal;font-size:9px}.path-step b{color:#dae9fa}.interpret-good{color:#65e0b1}.interpret-warn{color:#f8c96b}.interpret-danger{color:#fb8797}
+@media(pointer:coarse){.touch-range{display:block}.safe-range input[type=range]{pointer-events:none}.step-btn{min-height:42px}.precise-input{min-height:42px;font-size:13px}.precision-row{grid-template-columns:44px minmax(78px,1fr) auto 44px}}
+@media(max-width:520px){.header-actions{width:100%;justify-content:flex-start}.help-btn{padding:7px 12px}.definition-grid{grid-template-columns:1fr}.sheet-body{font-size:12px}.bottom-sheet{max-height:84vh}.precision-row{gap:4px}.ctrl{margin:12px 0}.ctrl-head label{font-size:11px}.metric small{font-size:8px}.metric span{font-size:9px}}
+
+
+/* inherited v0.5: readable secondary text, event-chain buttons, task generator */
+.gesture-strip{font-size:10px;line-height:1.35}.metric span{font-size:10px}.metric small{font-size:9.5px;line-height:1.3}.metric strong{font-size:16px}
+.panel-title span,.mode-note,.ctrl-head,.ctrl-head small,.precision-row .unit,.preset small,.reset-section>small,.legend,.diagnostic,.cause-chain,.task-pick small,.task-active p,.task-hint,.task-constraints,.task-result,.skill-row,.footnote,.muted-label,.time-read{font-size:clamp(9.5px,.72vw,11px)}
+.preset b,.task-pick b{font-size:clamp(10.5px,.78vw,12px)}.task-head strong{font-size:12px}.task-head span{font-size:9.5px}.section h3{font-size:11px}.sheet-body{font-size:12px}.sheet-body h3{font-size:14px}
+.task-generator-note{margin:6px 0 0;color:#7f95b4;font-size:9.5px;line-height:1.35}.task-pick .verified{display:inline-block;margin-top:4px;color:#8fe6c6;font-size:9px}.scenario-id{color:#7188a8;font:700 9px ui-monospace,monospace}
+.cause-chain{display:flex;align-items:center;gap:6px;flex-wrap:wrap;padding:8px}.cause-event{border:1px solid #294663;background:#0d1b2d;color:#d7e8f8;border-radius:9px;padding:7px 9px;cursor:pointer;font-size:10px;line-height:1.2;min-height:34px}.cause-event:hover,.cause-event:focus-visible{border-color:#54bdd0;background:#123049;outline:none}.cause-event b{color:#69e1f2}.cause-arrow{color:#69ddec;font-weight:900;font-size:14px;line-height:1}.cause-arrow::before{content:'→'}
+.base-contact-label{font-weight:800}
+.deep-physics{margin-top:10px;padding:10px;border:1px solid #2b4663;background:#081624;border-radius:11px}.deep-physics[hidden]{display:none}.deep-physics h3{color:#e8f2ff}.physics-toggle{margin-top:10px;font-weight:800}
+@media(max-width:620px){
+ .gesture-strip{font-size:9.5px}.metric span{font-size:9.5px}.metric small{font-size:9px}.metric strong{font-size:15px}
+ .cause-chain{display:grid;grid-template-columns:1fr;gap:4px}.cause-event{width:100%;text-align:left;font-size:10px;padding:8px 9px}.cause-arrow{text-align:center;height:13px}.cause-arrow::before{content:'↓'}
+ .task-generator-note{font-size:9px}.sheet-body{font-size:11.5px}
+}
+
+
+/* v0.6 desktop density, centered modals, formulas, task symbols, improved touch sliders */
+.version-mark{font-size:.42em;vertical-align:super;margin-left:.28em;color:#8da4c6;font-weight:800;letter-spacing:.02em}
+.task-symbol{display:inline-flex;align-items:baseline;border:0;background:transparent;color:#75e7f7;padding:0 1px;font:inherit;font-weight:800;text-decoration:underline;text-decoration-style:dotted;text-underline-offset:3px;cursor:pointer}
+.task-progress{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}.task-progress-chip{border:1px solid #29425f;background:#0a1828;border-radius:8px;padding:5px 7px;color:#aebfd5;font-size:10px}.task-progress-chip b{color:#eaf5ff}.task-progress-chip.target{border-color:#6b5325;color:#f5dda0}
+.formula-box{margin:10px 0;border:1px solid #2b4664;border-radius:10px;background:#071522;overflow:hidden}.formula-box summary{cursor:pointer;padding:8px 10px;color:#cceafa;font-weight:800}.formula-content{padding:0 10px 10px}.formula-main{font:700 15px ui-monospace,monospace;color:#f1f8ff;background:#08111d;border:1px solid #203650;border-radius:8px;padding:8px;margin:4px 0 8px;overflow-wrap:anywhere}.formula-subst{font:600 12px ui-monospace,monospace;color:#9fe6f2;margin:6px 0}.formula-note{font-size:10.5px;color:#91a6c2;line-height:1.45}.formula-model{color:#f6d692}
+.doping-readable{max-width:65%;text-align:right;line-height:1.25}.scientific{color:#75e5f5;font-weight:700;white-space:nowrap}
+@media(min-width:1200px){
+  html,body{height:100%;overflow:hidden}body{padding:8px}.app{max-width:none;width:100%;height:calc(100vh - 16px);display:flex;flex-direction:column}.app-header{margin-bottom:6px;flex:0 0 auto}.app-header h1{font-size:34px}.app-header p{font-size:13px}.mode-tabs{margin-bottom:7px;flex:0 0 auto}.layout{align-items:start;grid-template-columns:minmax(0,2.08fr) minmax(390px,.82fr);gap:9px;min-height:0;flex:1}.stage-card{align-self:start}.side-card{max-height:none;overflow:auto}.viewport canvas{max-height:430px;min-height:270px;aspect-ratio:16/5.75}.metrics{grid-template-columns:repeat(7,minmax(78px,1fr));padding:7px}.metric{min-height:57px}.metric span{font-size:11px}.metric strong{font-size:17px}.metric small{font-size:10px}.gesture-strip{font-size:10.5px}.timeline{padding:7px}.timeline-row+.timeline-row{margin-top:5px}.panel-title span,.mode-note,.ctrl-head,.ctrl-head small,.precision-row .unit,.preset small,.reset-section>small,.legend,.diagnostic,.cause-chain,.task-pick small,.task-active p,.task-hint,.task-constraints,.task-result,.skill-row,.footnote,.muted-label,.time-read{font-size:11px}.preset b,.task-pick b{font-size:12px}.section h3{font-size:12px}.side-card{padding:8px}.section{padding:9px;margin-bottom:7px}.ctrl{margin:7px 0}.precision-row{margin-top:4px}.safe-range{margin-top:2px;padding:2px 0}
+  .bottom-sheet{left:50%;top:50%;bottom:auto;transform:translate(-50%,-50%);width:min(900px,calc(100vw - 90px));max-height:min(82vh,850px);border:1px solid #2a4260;border-radius:18px;padding:0;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 28px 90px #000d}.sheet-handle{display:none}.sheet-head{padding:14px 16px 11px;flex:0 0 auto}.sheet-body{padding:13px 16px 16px;overflow:auto;min-height:0}.sheet-close{flex:0 0 auto}.definition-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media(pointer:coarse){.touch-range{inset:-18px 0}.safe-range.grabbed .touch-range{touch-action:none}.safe-range.grabbed input[type=range]{filter:drop-shadow(0 0 8px #61e4f5)}.safe-range.grabbed:after{content:'захвачено';position:absolute;right:4px;top:-18px;color:#67e3f4;font-size:9px;font-weight:800}}
+
+
+
+/* Silicon Lab v0.7.1: one shared desktop/mobile workbench for NPN and diode. */
+.device-tabs{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin:0 0 8px}
+.device-tab{border:1px solid #2a405f;color:#a3b9d5;background:#0c192a;border-radius:11px;padding:9px 14px;min-height:36px;font-size:12px;font-weight:750;cursor:pointer}
+.device-tab.active{border-color:#53cbd9;background:#143548;color:#e4fcff;box-shadow:inset 0 0 0 1px #64e3f522}
+.device-tab small{color:#8197b8;font-weight:500;margin-left:5px}
+body[data-device="diode"] .npn-only{display:none!important}
+body:not([data-device="diode"]) .diode-only{display:none!important}
+.diode-only.mode-panel{display:none}
+body[data-device="diode"] .diode-only.mode-panel.active{display:block}
+.diode-only.metrics{display:grid}
+.dmode-tools{display:flex;gap:6px;flex-wrap:wrap;margin:9px 0}
+.d-task-list{display:grid;gap:5px;margin:7px 0}
+.d-task-list button{text-align:left}
+.d-task-list button.active{border-color:#64e3f5;color:#d2faff;background:#14334a}
+.d-task-result{font-size:11px;line-height:1.5;color:#aac1de;padding:7px;border:1px solid #28435e;border-radius:9px;margin:8px 0 0}
+.d-task-result.good{border-color:#2e805e;color:#b1eed9}
+.diode-subnote{font-size:10.5px;line-height:1.5;color:#9bafc9;margin:7px 0}
+.diode-only .ctrl-head label{font-size:11px}
+#diodeExplainCard{min-height:45px}
+body[data-device="diode"] .side-card{scrollbar-color:#375372 #0d1726}
+@media(min-width:1200px){.app{height:calc(100vh - 16px)}.device-tabs{flex:0 0 auto}}
+@media(max-width:520px){.device-tabs{gap:5px}.device-tab{flex:1 1 0;min-width:0;padding:9px 5px;font-size:11px}.device-tab small{font-size:9px}}
+
+/* Silicon Lab v0.7.3 — human-first contextual help; shared visual system */
+.help-example{margin:9px 0;padding:10px 12px;border:1px solid #2a4562;border-radius:12px;background:linear-gradient(110deg,#0a1c2c,#101b2a)}
+.help-example strong{display:block;color:#e5f2ff;font-size:12.5px;margin-bottom:5px}
+.help-example p{font-size:11.5px;line-height:1.6}
+.help-flow{display:flex;gap:5px;align-items:center;flex-wrap:wrap;margin:10px 0 7px}
+.help-flow span{border:1px solid #2c536e;border-radius:9px;color:#b8eff7;padding:5px 7px;background:#091d2d;font-size:10.5px}
+.help-flow i{font-style:normal;font-weight:800;color:#83afc7}
+.help-highlight{border-left:3px solid #6cdbed;padding:9px 11px;background:#0d2232;border-radius:7px;margin:10px 0}
+.help-muted{color:#97aecb}
+.help-faq details{border:1px solid #253954;border-radius:10px;padding:8px 10px;margin:6px 0;background:#0b1828}
+.help-faq summary{font-weight:700;color:#d4eaff;cursor:pointer}
+.help-faq p{padding:4px 0}
+.help-section-label{margin:11px 0 4px;color:#9fe7f2;font-size:10px;letter-spacing:.07em;font-weight:800;text-transform:uppercase}
+@media(max-width:560px){.help-example{padding:9px}.help-flow{gap:4px}.help-flow span{font-size:10px}.help-nav button{min-height:31px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="app-header">
+    <div>
+      <h1><span>Silicon Lab</span><sup class="version-mark">v0.7.3</sup></h1>
+      <p><span id="deviceSubtitle">Интерактивная учебная лаборатория NPN · Physics Core → Visual Physics Layer</span></p>
+    </div>
+    <div class="header-actions">
+      <div class="header-badges"><span>offline</span><span>mouse + touch</span><span>session learning</span></div>
+      <button id="helpBtn" class="btn help-btn">Справка</button>
+    </div>
+  </header>
+
+
+  <nav class="device-tabs" aria-label="Выбор электронного элемента"><button class="device-tab active" data-device="npn" aria-pressed="true">◈ NPN-транзистор <small>эталон</small></button><button class="device-tab" data-device="diode" aria-pressed="false">◉ p–n-диод <small>новый</small></button></nav>
+  <nav class="mode-tabs" aria-label="Режим Silicon Lab">
+    <button class="mode-tab active" data-mode="explain">Обучение</button>
+    <button class="mode-tab" data-mode="tasks">Задания</button>
+    <button class="mode-tab" data-mode="experiment">Эксперименты</button>
+  </nav>
+
+  <div class="layout">
+    <main class="stage-card card">
+      <div class="toolbar">
+        <div class="toolbar-group">
+          <span id="modeBadge" class="sim-mode active">ACTIVE</span>
+          <button class="btn active" data-center="all">Весь кристалл</button>
+          <button class="btn" data-center="eb">E–B</button>
+          <button class="btn" data-center="bc">B–C</button>
+        </div>
+        <div class="toolbar-group">
+          <button class="btn active" data-zoom="1">×1</button>
+          <button class="btn" data-zoom="4">×4</button>
+          <button class="btn" data-zoom="12">×12</button>
+        </div>
+      </div>
+
+      <div id="viewport" class="viewport" aria-label="Рабочая зона кристалла">
+        <canvas id="sim" width="1280" height="500"></canvas>
+        <div id="zoomLevel" class="zoom-chip">×1.00 · макро</div>
+        <div id="explainCallout" class="explain-callout" hidden></div>
+      </div>
+
+      <div class="gesture-strip">
+        <span><b>1 палец / drag</b> — камера X/Y</span>
+        <span><b>2 пальца</b> — zoom выбранной зоны</span>
+        <span><b>колесо</b> — zoom под курсором</span>
+        <span><b>Space</b> — пауза</span>
+        <span><b>← / →</b> — кадр</span>
+      </div>
+
+      <section class="metrics npn-only" aria-label="Измерения транзистора">
+        <button class="metric" data-metric="ib"><span>I<sub>B</sub></span><strong id="mIB">—</strong><small>ток базы</small></button>
+        <button class="metric" data-metric="ic"><span>I<sub>C</sub></span><strong id="mIC">—</strong><small>ток коллектора</small></button>
+        <button class="metric" data-metric="beta"><span>β</span><strong id="mBeta">—</strong><small>усиление</small></button>
+        <button class="metric" data-metric="recomb"><span>Рекомбинация</span><strong id="mRec">—</strong><small>потери в базе</small></button>
+        <button class="metric" data-metric="tb"><span>T базы</span><strong id="mTB">—</strong><small>локально</small></button>
+        <button class="metric" data-metric="tc"><span>T коллектора</span><strong id="mTC">—</strong><small>hotspot</small></button>
+        <button class="metric" data-metric="vbe"><span>V<sub>BE</sub></span><strong id="mVBE">—</strong><small>переход E–B</small></button>
+        <button class="metric" data-metric="vcb"><span>V<sub>CB</sub></span><strong id="mVCB">—</strong><small>коллектор–база</small></button>
+        <button class="metric" data-metric="vbr"><span>V<sub>BR</sub></span><strong id="mVBR">—</strong><small>оценка пробоя B–C</small></button>
+        <button class="metric" data-metric="margin"><span>V<sub>CB</sub>/V<sub>BR</sub></span><strong id="mMargin">—</strong><small>доля пробивного запаса</small></button>
+        <button class="metric" data-metric="jc"><span>J<sub>C</sub></span><strong id="mJ">—</strong><small>плотность тока</small></button>
+        <button class="metric" data-metric="power"><span>P</span><strong id="mP">—</strong><small>рассеяние</small></button>
+        <button class="metric" data-metric="gamma"><span>γ emitter</span><strong id="mGamma">—</strong><small>эмиттерная инжекция</small></button>
+        <button class="metric" data-metric="alpha"><span>α base</span><strong id="mAlpha">—</strong><small>перенос через базу</small></button>
+      </section>
+
+<section class="metrics diode-only" aria-label="Измерения диода">
+<button class="metric" data-dmetric="I"><span>I<sub>D</sub></span><strong id="dI">—</strong><small>ток диода</small></button>
+<button class="metric" data-dmetric="vd"><span>U<sub>D</sub></span><strong id="dVD">—</strong><small>напряжение перехода</small></button>
+<button class="metric" data-dmetric="W"><span>W</span><strong id="dW">—</strong><small>обеднённая область</small></button>
+<button class="metric" data-dmetric="Wp"><span>W<sub>P</sub></span><strong id="dWP">—</strong><small>часть со стороны P</small></button>
+<button class="metric" data-dmetric="Wn"><span>W<sub>N</sub></span><strong id="dWN">—</strong><small>часть со стороны N</small></button>
+<button class="metric" data-dmetric="E"><span>|E|<sub>max</sub></span><strong id="dE">—</strong><small>пиковое поле</small></button>
+<button class="metric" data-dmetric="vbi"><span>V<sub>bi</sub></span><strong id="dVBI">—</strong><small>встроенный потенциал</small></button>
+<button class="metric" data-dmetric="vbr"><span>V<sub>BR</sub></span><strong id="dVBR">—</strong><small>оценка пробоя</small></button>
+<button class="metric" data-dmetric="temp"><span>T<sub>j</sub></span><strong id="dT">—</strong><small>температура перехода</small></button>
+<button class="metric" data-dmetric="power"><span>P<sub>D</sub></span><strong id="dP">—</strong><small>рассеяние</small></button>
+</section>
+      <section class="timeline">
+        <div class="timeline-row">
+          <button id="backBtn" class="btn icon">◀</button>
+          <button id="playBtn" class="btn icon active">❚❚</button>
+          <button id="forwardBtn" class="btn icon">▶</button>
+          <input id="scrub" type="range" min="0" max="0" value="0" step="1" aria-label="Перемотка">
+          <span id="timeRead" class="time-read">t = 0.000 s</span>
+        </div>
+        <div class="timeline-row">
+          <span class="muted-label">Скорость времени</span>
+          <input id="speedCtl" type="range" min="-3" max="2" value="0" step=".25" aria-label="Скорость времени">
+          <span id="speedRead" class="speed-chip">×1</span>
+          <button id="branchBtn" class="btn">Продолжить отсюда</button>
+        </div>
+      </section>
+    </main>
+
+    <aside class="side-card card">
+
+       <section id="diodeIntroExplain" class="mode-panel diode-only active"><div class="panel-title"><h2>Обучение</h2><span>нажми на объект p–n-перехода</span></div><p class="mode-note" id="diodeNarrative">Наблюдай носители и поле, исследуй кристалл.</p><div id="diodeExplainCard" class="explain-card"><h3>Начни с объекта</h3><p>Нажми на P-область, переход, электрон, дырку или ион.</p></div></section>
+       <section id="diodeIntroTasks" class="mode-panel diode-only"><div class="panel-title"><h2>Задания · диод</h2><span>4 физических опыта</span></div><div class="d-task-list" id="diodeTasks"></div><div class="d-task-result" id="diodeTaskResult">Выбери задачу и измени параметры.</div></section>
+       <section id="diodeIntroExperiment" class="mode-panel diode-only"><div class="panel-title"><h2>Эксперименты</h2><span>p–n-переход</span></div><p class="mode-note">Смена полярности сразу влияет на ток и обеднённую область. Повреждение накапливается в учебной тепловой модели.</p></section>
+      <section id="modeIntroExplain" class="mode-panel active">
+        <div class="panel-title"><h2>Обучение</h2><span>нажми на физический объект</span></div>
+        <p class="mode-note">Все видимые физические объекты в глубоком микроскопе можно исследовать: носители, ионы, переходы и даже стрелки/линии поля.</p>
+        <div id="explainCard" class="explain-card"><h3>Начни с объекта</h3><p>Увеличь переход и нажми на интересующий объект. Для движущегося носителя симуляция автоматически остановится.</p></div>
+      </section>
+
+      <section id="modeIntroTasks" class="mode-panel">
+        <div class="panel-title"><h2>Задания</h2><span id="taskScore">0 решено</span></div>
+        <div class="difficulty-tabs" id="difficultyTabs">
+          <button class="difficulty active" data-difficulty="basic">Базовый</button>
+          <button class="difficulty" data-difficulty="medium">Средний</button>
+          <button class="difficulty" data-difficulty="advanced">Продвинутый</button>
+          <button class="difficulty" data-difficulty="engineering">Инженерный</button>
+        </div>
+        <p class="task-generator-note">Каждое нажатие на уровень создаёт новую пару задач. Перед показом Silicon Lab проверяет, что у каждой есть хотя бы одно допустимое решение.</p>
+        <div id="taskList" class="task-list"></div>
+        <div id="taskActive" class="task-active" hidden>
+          <div class="task-head"><strong id="taskTitle"></strong><span id="taskDifficulty"></span></div>
+          <p id="taskGoal" class="task-goal"></p><div id="taskProgress" class="task-progress"></div><div id="taskHint" class="task-hint"></div><div id="taskConstraints" class="task-constraints"></div>
+          <div class="task-actions"><button id="checkTaskBtn" class="btn good">Проверить решение</button><button id="restartTaskBtn" class="btn">Начать заново</button></div>
+          <div id="taskResult" class="task-result"></div>
+        </div>
+        <div class="skills-wrap"><h3>Карта навыков · текущая сессия</h3><div id="skillMap" class="skill-map"></div></div>
+      </section>
+
+      <section id="modeIntroExperiment" class="mode-panel">
+        <div class="panel-title"><h2>Эксперименты</h2><span>минимум текста</span></div>
+        <p class="mode-note">Свободно меняй конструкцию на ходу. Physics Core пересчитывается сразу; накопленные повреждения сами не исчезают.</p>
+      </section>
+
+      <section class="section visual-section">
+        <h3>Визуальные слои</h3>
+        <div class="segmented"><span>Поле перехода</span><button class="seg active" data-field-style="arrows">Стрелки</button><button class="seg" data-field-style="lines">Силовые линии</button></div>
+        <label class="switch-row"><span><b>Поля носителей</b><small>только в глубоком микроскопе ×8+</small></span><input id="carrierFields" type="checkbox" checked></label>
+        <label class="switch-row"><span><b>Фиксированные ионы</b><small>детализация растёт с zoom</small></span><input id="fixedIons" type="checkbox" checked></label>
+        <label class="switch-row"><span><b>Формулы</b><small>автоматически раскрывать математический слой в карточках</small></span><input id="formulaAuto" type="checkbox" checked></label>
+      </section>
+
+      <section class="section"><h3>Быстрые эксперименты</h3><div class="presets">
+        <button class="btn preset" data-preset="normal"><b>Нормальный NPN</b><small>эталон</small></button><button class="btn preset" data-preset="thick"><b>Толстая база</b><small>рекомбинация</small></button>
+        <button class="btn preset" data-preset="tiny"><b>Малый коллектор</b><small>hotspot</small></button><button class="btn preset" data-preset="baseHot"><b>Перегрузка базы</b><small>B–E</small></button>
+        <button class="btn preset" data-preset="breakdown"><b>Пробой B–C</b><small>лавина</small></button><button class="btn preset" data-preset="weird"><b>Фантастика</b><small>неудачная структура</small></button>
+      </div></section>
+
+
+       <section class="section diode-only"><h3>Быстрые эксперименты · диод</h3><div class="presets">
+        <button class="btn preset" data-dpreset="forward"><b>Прямое</b><small>P к плюсу</small></button>
+        <button class="btn preset" data-dpreset="reverse"><b>Обратное</b><small>N к плюсу</small></button>
+        <button class="btn preset" data-dpreset="avalanche"><b>Пробой</b><small>учебная модель</small></button>
+        <button class="btn preset" data-dpreset="thin"><b>Слабое легирование</b><small>широкий переход</small></button></div></section>
+       <section class="section diode-only control-section"><h3>Электрический режим</h3><div id="dElectric"></div></section>
+       <section class="section diode-only control-section"><h3>Конструкция и легирование</h3><div id="dDoping"></div></section>
+       <section class="section diode-only"><h3>Сбросы</h3><div class="reset-grid"><button class="btn good" id="dNewRun">Новый прогон</button><button class="btn warn" id="dFactory">Стандартный диод</button></div><p class="diode-subnote">Новый прогон сохраняет параметры. Стандартный диод восстанавливает настройки.</p></section>
+       <section class="section diode-only"><h3>Что происходит</h3><div class="legend"><span><i class="dot electron"></i>электроны</span><span><i class="dot hole"></i>дырки</span><span><i class="dot ion"></i>фиксированные ионы</span></div><div class="diagnostic" id="dDiagnostic"></div><div class="cause-chain" id="dCauseChain"></div><div id="dFailure" class="failure-panel" hidden><h4>Failure analysis</h4><p id="dFailureText"></p></div></section>
+       <p class="footnote diode-only">Диод: резкий p–n-переход + упрощённый Shockley + последовательное сопротивление; пробой и нагрев качественные. Не SPICE и не TCAD.</p>
+      <section class="section control-section" data-control-topic="base"><h3>Геометрия</h3>
+        <div class="ctrl" data-param="emitterWidth"><div class="ctrl-head"><label>Толщина эмиттера</label></div><div class="precision-row"><button class="step-btn" data-step="-1">−</button><input class="precise-input" inputmode="decimal" aria-label="Толщина эмиттера"><span class="unit">µm</span><button class="step-btn" data-step="1">+</button></div><div class="safe-range"><input id="emitterWidth" type="range" min=".2" max="12" value="2.5" step=".05"><div class="touch-range" aria-hidden="true"></div></div></div>
+        <div class="ctrl" data-param="baseWidth" data-control-topic="base"><div class="ctrl-head"><label>Толщина базы</label></div><div class="precision-row"><button class="step-btn" data-step="-1">−</button><input class="precise-input" inputmode="decimal" aria-label="Толщина базы"><span class="unit">µm</span><button class="step-btn" data-step="1">+</button></div><div class="safe-range"><input id="baseWidth" type="range" min=".02" max="10" value=".12" step=".01"><div class="touch-range" aria-hidden="true"></div></div></div>
+        <div class="ctrl" data-param="collectorWidth" data-control-topic="collector"><div class="ctrl-head"><label>Толщина коллектора</label></div><div class="precision-row"><button class="step-btn" data-step="-1">−</button><input class="precise-input" inputmode="decimal"><span class="unit">µm</span><button class="step-btn" data-step="1">+</button></div><div class="safe-range"><input id="collectorWidth" type="range" min=".2" max="25" value="8" step=".1"><div class="touch-range"></div></div></div>
+        <div class="ctrl" data-param="collectorArea" data-control-topic="collector"><div class="ctrl-head"><label>Площадь коллектора</label></div><div class="precision-row"><button class="step-btn" data-step="-1">−</button><input class="precise-input" inputmode="decimal"><span class="unit">mm²</span><button class="step-btn" data-step="1">+</button></div><div class="safe-range"><input id="collectorArea" type="range" min=".08" max="12" value="2" step=".02"><div class="touch-range"></div></div></div>
+      </section>
+
+      <section class="section control-section"><h3>Легирование</h3>
+        <div class="ctrl" data-param="emitterExp" data-control-topic="emitter"><div class="ctrl-head"><label>Эмиттер N</label><small class="doping-readable" data-doping-display="emitterExp">ввод: 1e19</small></div><div class="precision-row"><button class="step-btn" data-step="-1">−</button><input class="precise-input wide" inputmode="decimal"><span class="unit">см⁻³</span><button class="step-btn" data-step="1">+</button></div><div class="safe-range"><input id="emitterExp" type="range" min="15" max="20.5" value="19.2" step=".05"><div class="touch-range"></div></div></div>
+        <div class="ctrl" data-param="baseExp" data-control-topic="base"><div class="ctrl-head"><label>База P</label><small class="doping-readable" data-doping-display="baseExp">ввод: 1e16</small></div><div class="precision-row"><button class="step-btn" data-step="-1">−</button><input class="precise-input wide" inputmode="decimal"><span class="unit">см⁻³</span><button class="step-btn" data-step="1">+</button></div><div class="safe-range"><input id="baseExp" type="range" min="14" max="19.5" value="16" step=".05"><div class="touch-range"></div></div></div>
+        <div class="ctrl" data-param="collectorExp" data-control-topic="collector"><div class="ctrl-head"><label>Коллектор N</label><small class="doping-readable" data-doping-display="collectorExp">ввод: 3e15</small></div><div class="precision-row"><button class="step-btn" data-step="-1">−</button><input class="precise-input wide" inputmode="decimal"><span class="unit">см⁻³</span><button class="step-btn" data-step="1">+</button></div><div class="safe-range"><input id="collectorExp" type="range" min="14" max="19.5" value="15.5" step=".05"><div class="touch-range"></div></div></div>
+      </section>
+
+      <section class="section control-section"><h3>Электрический режим</h3>
+        <div class="ctrl" data-param="baseCurrentLog" data-control-topic="base"><div class="ctrl-head"><label>I<sub>B</sub> — ток базы</label><small>ползунок + точный ввод в mA</small></div><div class="precision-row"><button class="step-btn" data-step="-1">−</button><input class="precise-input" inputmode="decimal"><span class="unit">mA</span><button class="step-btn" data-step="1">+</button></div><div class="safe-range"><input id="baseCurrentLog" type="range" min="-4" max="3" value="-.3" step=".02"><div class="touch-range"></div></div></div>
+        <div class="ctrl" data-param="vce" data-control-topic="field"><div class="ctrl-head"><label>V<sub>CE</sub></label></div><div class="precision-row"><button class="step-btn" data-step="-1">−</button><input class="precise-input" inputmode="decimal"><span class="unit">V</span><button class="step-btn" data-step="1">+</button></div><div class="safe-range"><input id="vce" type="range" min="0" max="140" value="6" step=".1"><div class="touch-range"></div></div></div>
+        <div class="ctrl" data-param="ambient" data-control-topic="thermal"><div class="ctrl-head"><label>Температура среды</label></div><div class="precision-row"><button class="step-btn" data-step="-1">−</button><input class="precise-input" inputmode="decimal"><span class="unit">°C</span><button class="step-btn" data-step="1">+</button></div><div class="safe-range"><input id="ambient" type="range" min="-20" max="120" value="25" step="1"><div class="touch-range"></div></div></div>
+      </section>
+
+      <section class="section reset-section"><h3>Сбросы</h3><div class="reset-grid"><button id="newRunBtn" class="btn good">Новый прогон</button><button id="factoryBtn" class="btn warn">Стандартный NPN</button></div><small>Новый прогон сохраняет настройки. Стандартный NPN возвращает эталонные параметры после повторного подтверждения.</small></section>
+
+      <section class="section status-section"><h3>Что происходит</h3><div class="legend"><span><i class="dot electron"></i>электроны</span><span><i class="dot hole"></i>вакансии</span><span><i class="dot ion"></i>ионы</span><span><i class="dot recomb"></i>рекомбинация</span></div><div id="diagnostic" class="diagnostic"></div><div id="causeChain" class="cause-chain"></div><div id="failurePanel" class="failure-panel" hidden><h4>Failure analysis</h4><p id="failureText"></p><button id="inspectFailureBtn" class="btn">К моменту перед отказом</button></div></section>
+      <p class="footnote">v0.6 — учебная физически согласованная qualitative-модель. Не заменяет SPICE/TCAD и паспорт реального транзистора.</p>
+    </aside>
+  </div>
+</div>
+
+<div id="sheetBackdrop" class="sheet-backdrop" hidden></div>
+<section id="infoSheet" class="bottom-sheet" hidden aria-modal="true" role="dialog">
+  <div class="sheet-handle"></div><div class="sheet-head"><div><small id="sheetKicker">СПРАВКА</small><h2 id="sheetTitle">—</h2></div><button id="closeSheet" class="sheet-close" aria-label="Закрыть">×</button></div><div id="sheetBody" class="sheet-body"></div>
+</section>
+<div id="appReady" hidden>BOOTING</div>
+<script>
+(()=>{
+"use strict";
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)), lerp=(a,b,t)=>a+(b-a)*t, frac=x=>x-Math.floor(x);
+const hash=n=>frac(Math.sin(n*127.1+311.7)*43758.5453123), log10=x=>Math.log(x)/Math.LN10;
+const canvas=$("#sim"),ctx=canvas.getContext("2d"),viewport=$("#viewport");
+
+const defaults={emitterWidth:2.5,baseWidth:.12,collectorWidth:8,collectorArea:2,emitterExp:19.2,baseExp:16,collectorExp:15.5,baseCurrentLog:-.3,vce:6,ambient:25};
+const params={...defaults};
+const state={t:0,tempB:25,tempC:25,tempE:25,damageThermal:0,damageField:0,damageBase:0,failed:false,failureMode:"",failureTime:null,lastMetrics:null};
+const visual={fieldStyle:"arrows",carrierFields:true,fixedIons:true,formulaAuto:true};
+const app={mode:"explain",selected:null,selectedKey:null,hitObjects:[],currentDifficulty:"basic",activeTaskId:null,taskStart:null,taskSolved:new Set(),generatedTasks:[],taskGeneration:0,taskHistory:{basic:[],medium:[],advanced:[],engineering:[]},currentCauseEvents:[],skills:{"p–n переход":0,"обеднённая область":0,"электрическое поле":0,"эмиттер":0,"база":0,"коллектор":0,"рекомбинация":0,"усиление":0,"тепловой режим":0,"пробой":0}};
+let running=true,simSpeed=1,history=[],historyIndex=-1,recordAccum=0,lastNow=performance.now(),factoryConfirmUntil=0;
+const RECORD_STEP=1/30,HISTORY_MAX=1500;
+
+const camera={zoom:1,targetZoom:1,cx:640,cy:270,targetCx:640,targetCy:270,minZoom:.82,maxZoom:24};
+const pointers=new Map();let gesture=null,pointerMoved=false;
+
+const presetData={
+ normal:{...defaults},
+ thick:{...defaults,baseWidth:4.2,baseExp:16.4,baseCurrentLog:.55,vce:8},
+ tiny:{...defaults,emitterWidth:4,baseWidth:.10,collectorWidth:.7,collectorArea:.12,emitterExp:19.5,baseExp:15.8,collectorExp:16.2,baseCurrentLog:1.7,vce:18},
+ baseHot:{...defaults,emitterWidth:2,baseWidth:.08,emitterExp:19.3,baseExp:15.7,baseCurrentLog:2.5,vce:3.5},
+ breakdown:{...defaults,baseWidth:.10,collectorWidth:.7,collectorArea:1.2,collectorExp:18.2,baseCurrentLog:-1,vce:65},
+ weird:{...defaults,emitterWidth:.45,baseWidth:2.6,collectorWidth:.35,collectorArea:.16,emitterExp:16.2,baseExp:18.4,collectorExp:19,baseCurrentLog:1.2,vce:38,ambient:65}
+};
+
+function pow10(e){return Math.pow(10,e)}
+function ibA(p){return Math.pow(10,p.baseCurrentLog)/1000}
+function vbeFromIB(ib,temp){if(ib<1e-11)return 0;return clamp(.44+.074*log10(1+ib*1e6)-.0017*(temp-25),0,1.15)}
+function calcMetrics(p,s){
+ const Ne=pow10(p.emitterExp),Nb=pow10(p.baseExp),Nc=pow10(p.collectorExp),ib=s.failed?0:ibA(p),vbe=vbeFromIB(ib,s.tempB),vcb=p.vce-vbe;
+ const gamma=clamp(1/(1+.85*(Nb/Ne)*Math.sqrt(Math.max(.03,p.baseWidth/.12))),.02,.99998);
+ const Ln=clamp(14*Math.pow(1e16/Nb,.16)*Math.pow(298/(273+s.tempB),.55),.35,28);
+ const alphaT=clamp(Math.exp(-p.baseWidth/Ln),.0001,.99995);
+ let capture=.1+.9*clamp((vcb+.08)/.45,0,1);const saturation=vcb<0;if(saturation)capture*=clamp(1+vcb/.75,.04,1);
+ let alphaF=clamp(gamma*alphaT*capture,.00001,.9997),beta=alphaF/Math.max(1e-6,1-alphaF);beta*=clamp(1-Math.max(0,s.tempB-150)/190,.18,1);
+ const vbr=clamp(8+78*Math.pow(10,(15.5-p.collectorExp)*.33)*Math.sqrt(p.collectorWidth/8),5.5,320);
+ const avalancheRatio=Math.max(0,vcb)/Math.max(1,vbr),avalancheMult=avalancheRatio<=.88?1:clamp(1+22*Math.pow((avalancheRatio-.88)/.35,2),1,120);
+ const leakage=2e-9*Math.pow(2,(Math.max(-20,s.tempC)-25)/10)*Math.pow(10,(p.collectorExp-15.5)*.12)*avalancheMult;
+ let ic=s.failed?0:Math.max(0,beta*ib+leakage);
+ const injLimit=.55*Math.max(.15,p.emitterWidth)*Math.pow(10,(p.emitterExp-19)*.16);if(ic>injLimit)ic=injLimit+Math.sqrt((ic-injLimit)*injLimit*.7);
+ const j=ic/Math.max(.02,p.collectorArea),pCollector=p.vce*ic,pBase=vbe*ib,power=pCollector+pBase,recombBase=clamp(1-alphaT,0,1),lostInjection=clamp(1-gamma,0,1);
+ const rthC=clamp(62/(Math.sqrt(p.collectorArea)+.22)*Math.sqrt(8/Math.max(.2,p.collectorWidth)),5,330),rthB=clamp(95/(.65+Math.sqrt(Math.max(.12,p.emitterWidth)))*Math.sqrt(.12/Math.max(.02,p.baseWidth)),12,260);
+ const safeBaseA=clamp(.075*(.45+p.emitterWidth/2.5)*Math.pow(10,(p.baseExp-16)*.08),.025,.55),fieldSeverity=Math.max(0,avalancheRatio-.9),baseSeverity=Math.max(0,ib/safeBaseA-1);
+ const fieldBC=clamp(.14+.52*clamp(Math.max(0,vcb)/Math.max(1,vbr*.55),0,1)+.38*clamp(avalancheRatio,0,1.3),.08,1.25);
+ const fieldEB=clamp(.10+.85*clamp(vbe/.85,0,1),.06,1);
+ let mode="ACTIVE";if(ib<1e-8)mode="CUTOFF";if(saturation&&ib>=1e-8)mode="SATURATION";if(avalancheRatio>=.92)mode="AVALANCHE";if(s.failed)mode="FAILED";
+ return {Ne,Nb,Nc,ib,vbe,vcb,gamma,Ln,alphaT,capture,alphaF,beta,vbr,avalancheRatio,avalancheMult,leakage,ic,j,pCollector,pBase,power,recombBase,lostInjection,rthC,rthB,safeBaseA,fieldSeverity,baseSeverity,fieldBC,fieldEB,mode};
+}
+function stepPhysics(dt){
+ if(state.failed){const cool=Math.exp(-dt/2.2);state.tempB=params.ambient+(state.tempB-params.ambient)*cool;state.tempC=params.ambient+(state.tempC-params.ambient)*cool;state.tempE=params.ambient+(state.tempE-params.ambient)*cool;state.t+=dt;state.lastMetrics=calcMetrics(params,state);return}
+ let m=calcMetrics(params,state);const cPower=m.pCollector*(.68+.32*clamp(m.j/10,0,1))+Math.max(0,m.avalancheMult-1)*.015,bPower=m.pBase+m.pCollector*(.035+.18*m.recombBase);
+ const targetC=params.ambient+cPower*m.rthC,targetB=params.ambient+bPower*m.rthB,tauC=clamp(2.8*Math.sqrt(params.collectorArea)+.7,.5,9),tauB=clamp(.65+params.baseWidth*.12+params.emitterWidth*.08,.25,2.5);
+ state.tempC+=(targetC-state.tempC)*(1-Math.exp(-dt/tauC));state.tempB+=(targetB-state.tempB)*(1-Math.exp(-dt/tauB));state.tempE+=(params.ambient+m.pBase*18-state.tempE)*(1-Math.exp(-dt/1.1));
+ const couple=(state.tempC-state.tempB)*.11*dt;state.tempB+=couple;state.tempC-=couple*.55;
+ const hot=Math.max(0,(Math.max(state.tempC,state.tempB)-205)/55);state.damageThermal=clamp(state.damageThermal+dt*hot*.72-dt*.015,0,1.5);state.damageField=clamp(state.damageField+dt*Math.max(0,m.avalancheRatio-1)*1.8-dt*.006,0,1.5);state.damageBase=clamp(state.damageBase+dt*m.baseSeverity*.45+dt*Math.max(0,(state.tempB-220)/60)*.4-dt*.01,0,1.5);
+ let f="";if(state.damageField>=1)f="breakdown_bc";else if(state.damageBase>=1)f="base_emitter";else if(state.damageThermal>=1||state.tempC>330||state.tempB>330)f="thermal";else if(m.j>35&&state.tempC>230)f="current_hotspot";
+ if(f){state.failed=true;state.failureMode=f;state.failureTime=state.t}state.t+=dt;state.lastMetrics=calcMetrics(params,state)
+}
+function snap(){return {t:state.t,tempB:state.tempB,tempC:state.tempC,tempE:state.tempE,damageThermal:state.damageThermal,damageField:state.damageField,damageBase:state.damageBase,failed:state.failed,failureMode:state.failureMode,failureTime:state.failureTime,params:{...params},metrics:{...(state.lastMetrics||calcMetrics(params,state))}}}
+function restore(s,restoreParams=true){if(restoreParams)Object.assign(params,s.params);Object.assign(state,{t:s.t,tempB:s.tempB,tempC:s.tempC,tempE:s.tempE,damageThermal:s.damageThermal,damageField:s.damageField,damageBase:s.damageBase,failed:s.failed,failureMode:s.failureMode,failureTime:s.failureTime,lastMetrics:{...s.metrics}});updateControls()}
+function record(){history.push(snap());if(history.length>HISTORY_MAX)history.shift();historyIndex=history.length-1;$("#scrub").max=Math.max(0,history.length-1);$("#scrub").value=historyIndex}
+function resetRun(){state.t=0;state.tempB=params.ambient;state.tempC=params.ambient;state.tempE=params.ambient;state.damageThermal=state.damageField=state.damageBase=0;state.failed=false;state.failureMode="";state.failureTime=null;state.lastMetrics=calcMetrics(params,state);history=[];historyIndex=-1;recordAccum=0;record()}
+function applyPreset(name){Object.assign(params,presetData[name]||defaults);updateControls();resetRun();centerCamera("all",true)}
+
+const ids=["emitterWidth","baseWidth","collectorWidth","collectorArea","emitterExp","baseExp","collectorExp","baseCurrentLog","vce","ambient"];
+const controlMeta={
+ emitterWidth:{step:.05,decimals:2},baseWidth:{step:.01,decimals:2},collectorWidth:{step:.1,decimals:1},collectorArea:{step:.02,decimals:2},
+ emitterExp:{step:.05,doping:true},baseExp:{step:.05,doping:true},collectorExp:{step:.05,doping:true},baseCurrentLog:{step:.02,current:true},vce:{step:.1,decimals:1},ambient:{step:1,decimals:0}
+};
+const superscriptDigits={'0':'⁰','1':'¹','2':'²','3':'³','4':'⁴','5':'⁵','6':'⁶','7':'⁷','8':'⁸','9':'⁹','-':'⁻','+':'⁺'};
+function supNum(n){return String(n).split('').map(c=>superscriptDigits[c]||c).join('')}
+function sciText(exp,d=2){const n=Math.pow(10,exp),e=Math.floor(Math.log10(n)),mant=n/Math.pow(10,e);return `${mant.toFixed(d)} × 10${supNum(e)} см⁻³`}
+const fmtDoping=x=>sciText(x,2);
+function physicalInputValue(id){const v=params[id],m=controlMeta[id];if(m.doping)return Math.pow(10,v).toExponential(3);if(m.current)return Math.pow(10,v).toPrecision(4);return Number(v).toFixed(m.decimals)}
+function parsePhysicalInput(id,raw){const el=$("#"+id),m=controlMeta[id];let v=Number(String(raw).replace(',','.').replace(/\s/g,''));if(!Number.isFinite(v))return null;if(m.doping){if(v<=0)return null;v=log10(v)}else if(m.current){if(v<=0)return null;v=log10(v)}return clamp(v,Number(el.min),Number(el.max))}
+function commitParam(id,v){if(!Number.isFinite(v))return;if(historyIndex>=0&&historyIndex<history.length-1){restore(history[historyIndex],false);history=history.slice(0,historyIndex+1)}params[id]=v;state.lastMetrics=calcMetrics(params,state);if(!running&&historyIndex>=0)history[historyIndex]=snap();updateControls();updateExplainCard()}
+function updateControls(){
+ ids.forEach(id=>{const range=$("#"+id);if(document.activeElement!==range)range.value=params[id];const ctrl=range.closest('.ctrl'),inp=ctrl?.querySelector('.precise-input');if(inp&&document.activeElement!==inp)inp.value=physicalInputValue(id)});
+ $$('[data-doping-display]').forEach(el=>{const id=el.dataset.dopingDisplay;el.innerHTML=`<span class="scientific">${sciText(params[id],2)}</span> · ввод: 1e${Math.round(params[id])}`});
+}
+ids.forEach(id=>{
+ const range=$("#"+id),ctrl=range.closest('.ctrl'),inp=ctrl.querySelector('.precise-input');
+ range.addEventListener('input',e=>commitParam(id,Number(e.target.value)));
+ inp.addEventListener('change',()=>{const v=parsePhysicalInput(id,inp.value);if(v===null){inp.value=physicalInputValue(id);return}commitParam(id,v)});
+ inp.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();inp.blur()}});
+ ctrl.querySelectorAll('.step-btn').forEach(b=>b.addEventListener('click',()=>{const dir=Number(b.dataset.step),m=controlMeta[id],range=$("#"+id);commitParam(id,clamp(params[id]+dir*m.step,Number(range.min),Number(range.max)))}));
+});
+// v0.6 mobile-safe sliders: easy intentional grab, still resistant to page scrolling.
+document.querySelectorAll('.safe-range').forEach(wrap=>{
+ const range=wrap.querySelector('input[type=range]'),layer=wrap.querySelector('.touch-range');if(!layer)return;let g=null;
+ const geometry=()=>{const r=wrap.getBoundingClientRect(),min=Number(range.min),max=Number(range.max),ratio=(Number(range.value)-min)/(max-min);return {r,min,max,knobX:r.left+clamp(ratio,0,1)*r.width}};
+ const setByX=x=>{const {r,min,max}=geometry(),t=clamp((x-r.left)/r.width,0,1),step=Number(range.step)||1;let v=min+t*(max-min);v=Math.round((v-min)/step)*step+min;commitParam(range.id,clamp(v,min,max))};
+ layer.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;const geo=geometry(),near=Math.abs(e.clientX-geo.knobX)<=30;g={id:e.pointerId,x:e.clientX,y:e.clientY,active:false,vertical:false,near};},{passive:true});
+ layer.addEventListener('pointermove',e=>{if(!g||g.id!==e.pointerId)return;const dx=e.clientX-g.x,dy=e.clientY-g.y,dist=Math.hypot(dx,dy);
+   if(!g.active&&!g.vertical){
+     if(g.near&&dist>=3&&Math.abs(dx)>=Math.abs(dy)*.45){g.active=true}
+     else if(!g.near&&dist>=7&&Math.abs(dx)>=Math.abs(dy)*.85){g.active=true}
+     else if(dist>=8&&Math.abs(dy)>Math.abs(dx)*1.2){g.vertical=true}
+     if(g.active){wrap.classList.add('grabbed');try{layer.setPointerCapture(e.pointerId)}catch(_){}}
+   }
+   if(g.active){e.preventDefault();setByX(e.clientX)}
+ },{passive:false});
+ const end=e=>{if(!g||g.id!==e.pointerId)return;wrap.classList.remove('grabbed');try{layer.releasePointerCapture(e.pointerId)}catch(_){}g=null};layer.addEventListener('pointerup',end);layer.addEventListener('pointercancel',end);
+});
+
+function fmtCurrent(A){const a=Math.abs(A);if(a>=1)return A.toFixed(2)+" A";if(a>=1e-3)return (A*1e3).toFixed(a>=.1?1:2)+" mA";if(a>=1e-6)return (A*1e6).toFixed(1)+" µA";return (A*1e9).toFixed(1)+" nA"}
+const fmtPct=x=>(x*100).toFixed(x<.01?2:1)+" %",fmtTemp=t=>Math.round(t)+" °C";
+
+function crystalLayout(p){const left=92,right=1188,yTop=132,yBot=395,total=right-left,we=1.2+Math.sqrt(p.emitterWidth)*.55,wb=.55+Math.sqrt(p.baseWidth)*1.22,wc=1.3+Math.sqrt(p.collectorWidth)*.58,sum=we+wb+wc,ew=total*we/sum,bw=total*wb/sum;return {left,right,yTop,yBot,e0:left,e1:left+ew,b0:left+ew,b1:left+ew+bw,c0:left+ew+bw,c1:right,eW:ew,bW:bw,cW:right-(left+ew+bw)}}
+function cameraCenters(l){return {all:{x:(l.left+l.right)/2,y:(l.yTop+l.yBot)/2,z:1},eb:{x:l.e1,y:(l.yTop+l.yBot)/2,z:4},bc:{x:l.b1,y:(l.yTop+l.yBot)/2,z:4}}}
+function clampCamera(){const l=crystalLayout(params),z=clamp(camera.targetZoom,camera.minZoom,camera.maxZoom);camera.targetZoom=z;const halfW=canvas.width/(2*z),halfH=canvas.height/(2*z),marginX=70/z+20,marginY=55/z+15;let minX=l.left-marginX+halfW,maxX=l.right+marginX-halfW,minY=l.yTop-marginY+halfH,maxY=l.yBot+marginY-halfH;if(minX>maxX){minX=maxX=(l.left+l.right)/2}if(minY>maxY){minY=maxY=(l.yTop+l.yBot)/2}camera.targetCx=clamp(camera.targetCx,minX,maxX);camera.targetCy=clamp(camera.targetCy,minY,maxY)}
+function centerCamera(where,forceZoom=false){const c=cameraCenters(crystalLayout(params))[where]||cameraCenters(crystalLayout(params)).all;camera.targetCx=c.x;camera.targetCy=c.y;if(forceZoom||where==="all")camera.targetZoom=c.z;clampCamera();$$('[data-center]').forEach(b=>b.classList.toggle('active',b.dataset.center===where))}
+function screenToWorld(sx,sy,z=camera.targetZoom,cx=camera.targetCx,cy=camera.targetCy){return {x:cx+(sx-canvas.width/2)/z,y:cy+(sy-canvas.height/2)/z}}
+function setZoomAround(newZ,sx,sy){const old=camera.targetZoom,anchor=screenToWorld(sx,sy,old,camera.targetCx,camera.targetCy);camera.targetZoom=clamp(newZ,camera.minZoom,camera.maxZoom);camera.targetCx=anchor.x-(sx-canvas.width/2)/camera.targetZoom;camera.targetCy=anchor.y-(sy-canvas.height/2)/camera.targetZoom;clampCamera();updateZoomButtons()}
+function updateZoomButtons(){$$('[data-zoom]').forEach(b=>b.classList.toggle('active',Math.abs(Number(b.dataset.zoom)-camera.targetZoom)<.05));const level=camera.zoom<1.8?'макро':camera.zoom<7.5?'переходы':'глубокий микроскоп';$("#zoomLevel").textContent=`×${camera.zoom.toFixed(2)} · ${level}`}
+$$('[data-center]').forEach(b=>b.addEventListener('click',()=>centerCamera(b.dataset.center,true)));$$('[data-zoom]').forEach(b=>b.addEventListener('click',()=>{camera.targetZoom=Number(b.dataset.zoom);clampCamera();updateZoomButtons()}));
+viewport.addEventListener('wheel',e=>{e.preventDefault();const r=canvas.getBoundingClientRect(),sx=(e.clientX-r.left)/r.width*canvas.width,sy=(e.clientY-r.top)/r.height*canvas.height;setZoomAround(camera.targetZoom*Math.exp(-e.deltaY*.0016),sx,sy)},{passive:false});
+function pointerCanvasPos(e){const r=canvas.getBoundingClientRect();return {sx:(e.clientX-r.left)/r.width*canvas.width,sy:(e.clientY-r.top)/r.height*canvas.height}}
+function startPanFromPointer(p){gesture={type:'pan',id:p.id,startX:p.x,startY:p.y,startCx:camera.targetCx,startCy:camera.targetCy}}
+function startPinch(){const pts=[...pointers.values()].slice(0,2),a=pts[0],b=pts[1],dx=b.x-a.x,dy=b.y-a.y,dist=Math.hypot(dx,dy),mx=(a.x+b.x)/2,my=(a.y+b.y)/2,r=canvas.getBoundingClientRect(),sx=(mx-r.left)/r.width*canvas.width,sy=(my-r.top)/r.height*canvas.height;gesture={type:'pinch',ids:[a.id,b.id],startDist:Math.max(8,dist),startZoom:camera.targetZoom,anchor:screenToWorld(sx,sy),rect:r};pointerMoved=true}
+viewport.addEventListener('pointerdown',e=>{try{viewport.setPointerCapture?.(e.pointerId)}catch(_e){}pointers.set(e.pointerId,{id:e.pointerId,x:e.clientX,y:e.clientY,startX:e.clientX,startY:e.clientY});pointerMoved=false;if(pointers.size===1)startPanFromPointer([...pointers.values()][0]);else if(pointers.size>=2)startPinch();viewport.classList.add('dragging')});
+viewport.addEventListener('pointermove',e=>{if(!pointers.has(e.pointerId))return;const p=pointers.get(e.pointerId);p.x=e.clientX;p.y=e.clientY;if(Math.hypot(p.x-p.startX,p.y-p.startY)>5)pointerMoved=true;if(pointers.size>=2){if(!gesture||gesture.type!=='pinch')startPinch();const pts=gesture.ids.map(id=>pointers.get(id)).filter(Boolean);if(pts.length<2)return;const a=pts[0],b=pts[1],dist=Math.hypot(b.x-a.x,b.y-a.y),mx=(a.x+b.x)/2,my=(a.y+b.y)/2,r=gesture.rect,sx=(mx-r.left)/r.width*canvas.width,sy=(my-r.top)/r.height*canvas.height,newZ=clamp(gesture.startZoom*dist/gesture.startDist,camera.minZoom,camera.maxZoom);camera.targetZoom=newZ;camera.targetCx=gesture.anchor.x-(sx-canvas.width/2)/newZ;camera.targetCy=gesture.anchor.y-(sy-canvas.height/2)/newZ;clampCamera();updateZoomButtons();e.preventDefault();return}if(gesture&&gesture.type==='pan'&&gesture.id===e.pointerId){const r=canvas.getBoundingClientRect(),dx=(e.clientX-gesture.startX)*canvas.width/r.width,dy=(e.clientY-gesture.startY)*canvas.height/r.height;camera.targetCx=gesture.startCx-dx/camera.targetZoom;camera.targetCy=gesture.startCy-dy/camera.targetZoom;clampCamera();$$('[data-center]').forEach(b=>b.classList.remove('active'));e.preventDefault()}});
+function pointerEnd(e){const wasClick=!pointerMoved&&pointers.size===1;const pos=pointerCanvasPos(e);pointers.delete(e.pointerId);if(wasClick&&app.mode==='explain')selectAt(pos.sx,pos.sy);if(pointers.size===1){const p=[...pointers.values()][0];p.startX=p.x;p.startY=p.y;startPanFromPointer(p)}else if(pointers.size===0){gesture=null;viewport.classList.remove('dragging')}else startPinch()}
+viewport.addEventListener('pointerup',pointerEnd);viewport.addEventListener('pointercancel',pointerEnd);
+function cameraStep(){const k=.19;camera.zoom+=(camera.targetZoom-camera.zoom)*k;camera.cx+=(camera.targetCx-camera.cx)*k;camera.cy+=(camera.targetCy-camera.cy)*k;updateZoomButtons()}
+function applyTransform(){ctx.translate(canvas.width/2,canvas.height/2);ctx.scale(camera.zoom,camera.zoom);ctx.translate(-camera.cx,-camera.cy)}
+function worldToScreen(x,y){return {x:canvas.width/2+(x-camera.cx)*camera.zoom,y:canvas.height/2+(y-camera.cy)*camera.zoom}}
+
+function heatColor(base,temp,failed){const t=clamp((temp-35)/230,0,1);let r=Math.round(lerp(base[0],255,t)),g=Math.round(lerp(base[1],t<.55?80:20,t)),b=Math.round(lerp(base[2],t<.55?30:18,t));if(failed){r*=.38;g*=.35;b*=.35}return `rgb(${r|0},${g|0},${b|0})`}
+function depletionGeom(l,m){const eb=clamp(37*(1-m.vbe/1.05)+8,6,52),bc=clamp(25+72*Math.sqrt(Math.max(0,m.vcb+.2)/Math.max(1,m.vbr*.25)),20,132);return {eb,bc,ebL:l.e1-eb*.58,ebR:l.e1+eb*.42,bcL:l.b1-bc*.24,bcR:l.b1+bc*.76}}
+const hitPriority={electron:100,hole:98,'fixed-ion':96,'base-contact':95,'field-arrow':90,'field-line':90,hotspot:88,eb:76,bc:76,'depletion-eb':70,'depletion-bc':70,'field-eb':66,'field-bc':66,emitter:30,base:30,collector:30};
+function registerHit(type,x,y,r,meta={}){app.hitObjects.push({type,x,y,r,meta,priority:meta.priority??hitPriority[type]??50})}
+function screenSized(px,deepPx=px){const deep=clamp((camera.zoom-7)/11,0,1);return lerp(px,deepPx,deep)/camera.zoom}
+function drawRegions(l,p,st){const regs=[[l.e0,l.e1,'ЭМИТТЕР',`N 10^${p.emitterExp.toFixed(1)}`,st.tempE,[18,82,112],'emitter'],[l.b0,l.b1,'БАЗА',`P 10^${p.baseExp.toFixed(1)}`,st.tempB,[102,52,92],'base'],[l.c0,l.c1,'КОЛЛЕКТОР',`N 10^${p.collectorExp.toFixed(1)}`,st.tempC,[24,72,104],'collector']];for(const r of regs){ctx.fillStyle=heatColor(r[5],r[4],st.failed);ctx.fillRect(r[0],l.yTop,r[1]-r[0],l.yBot-l.yTop);ctx.strokeStyle='#bad7ff33';ctx.lineWidth=1.5/camera.zoom;ctx.strokeRect(r[0],l.yTop,r[1]-r[0],l.yBot-l.yTop);ctx.textAlign='center';ctx.fillStyle='#eff7ff';ctx.font=`700 ${15/Math.sqrt(camera.zoom)}px system-ui`;ctx.fillText(r[2],(r[0]+r[1])/2,l.yTop-27/camera.zoom);ctx.fillStyle='#91a7c8';ctx.font=`${10/Math.sqrt(camera.zoom)}px ui-monospace,monospace`;ctx.fillText(r[3],(r[0]+r[1])/2,l.yTop-11/camera.zoom);registerHit(r[6],(r[0]+r[1])/2,(l.yTop+l.yBot)/2,Math.max(18,(r[1]-r[0])*.42))}ctx.textAlign='center';ctx.fillStyle='#8fa5c6';ctx.font=`${10/Math.sqrt(camera.zoom)}px ui-monospace,monospace`;const y=l.yBot+18/camera.zoom;ctx.fillText(`${p.emitterWidth.toFixed(2)} µm`,(l.e0+l.e1)/2,y);ctx.fillText(`${p.baseWidth.toFixed(2)} µm`,(l.b0+l.b1)/2,y);ctx.fillText(`${p.collectorWidth.toFixed(1)} µm · ${p.collectorArea.toFixed(2)} mm²`,(l.c0+l.c1)/2,y);ctx.textAlign='left'}
+function drawLattice(l,p,dep){if(camera.zoom<7.5)return;const detail=clamp((camera.zoom-7.5)/10.5,0,1),alpha=lerp(.22,.56,detail),step=lerp(25,16,detail);ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle='#c2d1e4';ctx.fillStyle='#d5e0ed';ctx.lineWidth=screenSized(.8,1.4);for(let x=l.left+8;x<l.right-8;x+=step)for(let y=l.yTop+10;y<l.yBot-8;y+=step){ctx.beginPath();ctx.arc(x,y,screenSized(2.2,4.2),0,Math.PI*2);ctx.stroke();if(camera.zoom>10.5){ctx.font=`${screenSized(8.5,12)}px ui-monospace,monospace`;ctx.fillText('Si',x+screenSized(4,6),y-screenSized(3,5))}}ctx.restore()}
+function drawDepletion(l,m,dep){const sevBC=m.fieldBC,sevEB=m.fieldEB;ctx.save();const g1=ctx.createLinearGradient(dep.ebL,0,dep.ebR,0);g1.addColorStop(0,'rgba(70,218,255,.03)');g1.addColorStop(.5,`rgba(144,95,255,${.08+.13*sevEB})`);g1.addColorStop(1,'rgba(255,154,75,.03)');ctx.fillStyle=g1;ctx.fillRect(dep.ebL,l.yTop,dep.ebR-dep.ebL,l.yBot-l.yTop);const g2=ctx.createLinearGradient(dep.bcL,0,dep.bcR,0);g2.addColorStop(0,'rgba(255,145,68,.02)');g2.addColorStop(.42,`rgba(168,92,255,${.10+.18*sevBC})`);g2.addColorStop(1,'rgba(79,220,255,.02)');ctx.fillStyle=g2;ctx.fillRect(dep.bcL,l.yTop,dep.bcR-dep.bcL,l.yBot-l.yTop);
+ // structured bands make depletion visibly different from a flat background
+ const bandAlpha=clamp(.06+.11*(camera.zoom/12),.06,.18);ctx.strokeStyle=`rgba(205,190,255,${bandAlpha})`;ctx.lineWidth=.8/camera.zoom;for(const [x0,x1] of [[dep.ebL,dep.ebR],[dep.bcL,dep.bcR]])for(let x=x0+5/camera.zoom;x<x1;x+=10/camera.zoom){ctx.beginPath();ctx.moveTo(x,l.yTop);ctx.lineTo(x,l.yBot);ctx.stroke()}
+ ctx.restore();registerHit('depletion-eb',(dep.ebL+dep.ebR)/2,(l.yTop+l.yBot)/2,Math.max(16,(dep.ebR-dep.ebL)*.65));registerHit('depletion-bc',(dep.bcL+dep.bcR)/2,(l.yTop+l.yBot)/2,Math.max(18,(dep.bcR-dep.bcL)*.55));registerHit('eb',l.e1,(l.yTop+l.yBot)/2,22);registerHit('bc',l.b1,(l.yTop+l.yBot)/2,25)}
+function drawFixedIons(l,m,dep){
+ if(!visual.fixedIons||camera.zoom<1.8)return;
+ const detail=clamp((camera.zoom-1.8)/10,0,1),count=Math.round(7+detail*36),showSign=camera.zoom>=4.2;
+ ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
+ for(const zone of [{x0:dep.ebL,x1:l.e1,sign:'+',col:'#8ee7ff',seed:100,junction:'E–B',side:'N'},{x0:l.e1,x1:dep.ebR,sign:'−',col:'#ffc078',seed:200,junction:'E–B',side:'P'},{x0:dep.bcL,x1:l.b1,sign:'−',col:'#ffc078',seed:300,junction:'B–C',side:'P'},{x0:l.b1,x1:dep.bcR,sign:'+',col:'#8ee7ff',seed:400,junction:'B–C',side:'N'}]){
+  if(zone.x1-zone.x0<3)continue;
+  for(let i=0;i<count;i++){
+   const x=lerp(zone.x0+2,zone.x1-2,hash(zone.seed+i*4.1)),y=lerp(l.yTop+12,l.yBot-12,hash(zone.seed+i*9.7)),size=screenSized(6,11);
+   ctx.globalAlpha=.45+.5*detail;ctx.strokeStyle=zone.col;ctx.fillStyle=zone.col;ctx.lineWidth=screenSized(1.2,2.1);ctx.beginPath();ctx.roundRect(x-size,y-size,size*2,size*2,screenSized(1.8,3));ctx.stroke();
+   if(showSign){ctx.font=`700 ${screenSized(10,15)}px ui-monospace,monospace`;ctx.fillText(zone.sign,x,y)}
+   if(detail>.12)registerHit('fixed-ion',x,y,screenSized(8,14),{sign:zone.sign,junction:zone.junction,side:zone.side,index:i});
+  }
+ }
+ ctx.restore();
+}
+function drawFieldArrows(x0,x1,l,strength,direction='left',junction='B–C'){
+ const rows=5,cols=Math.max(2,Math.round(2+strength*4));ctx.save();ctx.globalAlpha=.48+.45*strength;ctx.strokeStyle=strength>1?'#ffc8ff':'#b6a4ff';ctx.fillStyle=ctx.strokeStyle;ctx.lineWidth=screenSized(1.8,3.0);
+ for(let r=0;r<rows;r++){const y=lerp(l.yTop+30,l.yBot-30,(r+.5)/rows);for(let c=0;c<cols;c++){const x=lerp(x0+8,x1-8,(c+.5)/cols),len=screenSized(25+13*strength,46+22*strength),xa=direction==='left'?x+len/2:x-len/2,xb=direction==='left'?x-len/2:x+len/2;ctx.beginPath();ctx.moveTo(xa,y);ctx.lineTo(xb,y);ctx.stroke();const ah=screenSized(7,12),sgn=direction==='left'?1:-1;ctx.beginPath();ctx.moveTo(xb,y);ctx.lineTo(xb+sgn*ah,y-ah*.65);ctx.lineTo(xb+sgn*ah,y+ah*.65);ctx.closePath();ctx.fill();registerHit('field-arrow',x,y,screenSized(16,25),{junction,direction,strength,row:r,col:c})}}
+ ctx.restore();
+}
+function drawFieldLines(x0,x1,l,strength,direction='left',t=0,junction='B–C'){
+ ctx.save();ctx.globalAlpha=.46+.46*strength;ctx.strokeStyle=strength>1?'#f7c2ff':'#b2a5ff';ctx.fillStyle=ctx.strokeStyle;ctx.lineWidth=screenSized(1.5+strength*.75,3.0+strength);const n=Math.max(4,Math.round(4+strength*4));
+ const start=direction==='left'?x1:x0,end=direction==='left'?x0:x1,dir=Math.sign(end-start)||1;
+ for(let i=0;i<n;i++){
+   const baseY=lerp(l.yTop+24,l.yBot-24,(i+.5)/n),amp=screenSized(5+strength*2,11+strength*4)*clamp(.55+camera.zoom/18,.65,1.35),cycles=1.25+.25*strength,phase=t*(1.15+.25*strength)+i*.88;
+   ctx.beginPath();const pts=[];for(let k=0;k<=30;k++){const u=k/30,x=lerp(start,end,u),env=Math.sin(Math.PI*u),y=baseY+Math.sin(u*Math.PI*2*cycles+phase)*amp*env+Math.sin(u*Math.PI*4.2-phase*.55)*amp*.18*env;pts.push([x,y]);if(k===0)ctx.moveTo(x,y);else ctx.lineTo(x,y)}ctx.stroke();
+   // Moving direction marker rides on the wave, preserving the physical field direction.
+   const u=.58+.16*Math.sin(t*.55+i*.6),idx=Math.max(1,Math.min(29,Math.round(u*30))),p=pts[idx],p0=pts[idx-1],ang=Math.atan2(p[1]-p0[1],p[0]-p0[0]),ah=screenSized(7.5,13);ctx.save();ctx.translate(p[0],p[1]);ctx.rotate(ang);ctx.beginPath();ctx.moveTo(ah,0);ctx.lineTo(-ah*.35,-ah*.68);ctx.lineTo(-ah*.35,ah*.68);ctx.closePath();ctx.fill();ctx.restore();registerHit('field-line',p[0],p[1],screenSized(18,28),{junction,direction,strength,line:i});
+ }
+ ctx.restore();
+}
+function drawJunctionField(l,m,dep,t){if(visual.fieldStyle==='arrows'){drawFieldArrows(dep.ebL,dep.ebR,l,m.fieldEB,'right','E–B');drawFieldArrows(dep.bcL,dep.bcR,l,m.fieldBC,'left','B–C')}else{drawFieldLines(dep.ebL,dep.ebR,l,m.fieldEB,'right',t,'E–B');drawFieldLines(dep.bcL,dep.bcR,l,m.fieldBC,'left',t,'B–C')}registerHit('field-eb',(dep.ebL+dep.ebR)/2,(l.yTop+l.yBot)/2,Math.max(20,(dep.ebR-dep.ebL)*.48),{strength:m.fieldEB,junction:'E–B'});registerHit('field-bc',(dep.bcL+dep.bcR)/2,(l.yTop+l.yBot)/2,Math.max(20,(dep.bcR-dep.bcL)*.48),{strength:m.fieldBC,junction:'B–C'})}
+function electronCount(m,failed){if(m.ib<1e-10||failed)return 0;const level=clamp((log10(m.ic+1e-8)+5.2)/5.4,0,1);return Math.round(16+level*190)}
+function electronPosition(i,l,m,t){const n=Math.max(1,electronCount(m,false)),seed=i*13.137,p0=frac(t*(.13+.11*clamp(log10(m.ic*1000+1)/3,0,1))+i/n+hash(seed)*.17),x0=l.e0+8,x1=l.c1-8,span=x1-x0,bs=(l.e1-x0)/span,be=(l.b1-x0)/span,inject=hash(seed+11)>m.lostInjection,willRec=hash(seed+29)<m.recombBase,recAt=lerp(bs+.04*(be-bs),be-.08*(be-bs),hash(seed+77)),collected=hash(seed+41)<m.capture;let p=p0,a=1,status='moving';if(!inject&&p>bs){p=bs;a=clamp(1-(p0-bs)*12,0,1);status='reverse-injection'}else if(willRec&&p>recAt){p=recAt;a=clamp(1-(p0-recAt)*10,0,1);status='recombined'}else if(!collected&&p>be){p=be;a=clamp(1-(p0-be)*8,0,1);status='not-collected'};let x;
+ // emitter drift is simple, base uses a diffusive random-walk-looking path, BC collection accelerates
+ if(p<=bs)x=lerp(x0,l.e1,p/Math.max(.001,bs));else if(p<=be){const u=(p-bs)/Math.max(.001,be-bs);x=lerp(l.e1,l.b1,u)}else{const u=(p-be)/Math.max(.001,1-be),acc=1-Math.pow(1-u,2.25);x=lerp(l.b1,x1,acc)}
+ let y=lerp(l.yTop+16,l.yBot-16,hash(seed+4));if(p>bs&&p<be){const u=(p-bs)/Math.max(.001,be-bs);y+=Math.sin(u*24+seed)*8+Math.sin(u*53+seed*.7)*4}else y+=Math.sin(t*3.2+i)*2.1;return {x,y,a,status,seed,p,recAt,bs,be}}
+function recombFlash(x,y,t,seed){const ph=frac(t*5+hash(seed+99));if(ph>.18)return;const a=1-ph/.18;ctx.save();ctx.globalAlpha=a;ctx.strokeStyle='#fff1c8';ctx.shadowColor='#ff8d60';ctx.shadowBlur=lerp(12,22,clamp((camera.zoom-8)/10,0,1));ctx.lineWidth=screenSized(1.5,2.5);ctx.beginPath();ctx.arc(x,y,screenSized(7+ph*13,12+ph*22),0,Math.PI*2);ctx.stroke();ctx.restore()}
+function drawLocalField(x,y,sign){if(!visual.carrierFields||camera.zoom<8)return;ctx.save();ctx.strokeStyle=sign<0?'#7ee9ff':'#ffc57c';ctx.fillStyle=ctx.strokeStyle;ctx.globalAlpha=.48;ctx.lineWidth=screenSized(1,1.7);const rays=8,radius=screenSized(31,48),inner=screenSized(10,15);for(let k=0;k<rays;k++){const a=k*Math.PI*2/rays,outer=radius;let x1=x+Math.cos(a)*(sign<0?outer:inner),y1=y+Math.sin(a)*(sign<0?outer:inner),x2=x+Math.cos(a)*(sign<0?inner:outer),y2=y+Math.sin(a)*(sign<0?inner:outer);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();const aa=Math.atan2(y2-y1,x2-x1),ah=screenSized(4,7);ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-Math.cos(aa-.55)*ah,y2-Math.sin(aa-.55)*ah);ctx.lineTo(x2-Math.cos(aa+.55)*ah,y2-Math.sin(aa+.55)*ah);ctx.closePath();ctx.fill()}ctx.restore()}
+function electronRegion(ep){if(ep.p<ep.bs)return 'эмиттер';if(ep.p<ep.be)return 'база';return 'коллектор / B–C'}
+function drawElectronTrail(id,l,m,t){if(!app.selectedKey||app.selectedKey.type!=='electron'||app.selectedKey.id!==id)return;ctx.save();ctx.strokeStyle='#ffe791';ctx.lineWidth=screenSized(1.8,2.8);ctx.globalAlpha=.75;ctx.setLineDash([screenSized(5,8),screenSized(4,6)]);ctx.beginPath();let started=false,last=null;for(let k=42;k>=0;k--){const tt=t-k*.025,ep=electronPosition(id,l,m,tt);if(last&&Math.hypot(ep.x-last.x,ep.y-last.y)>80){started=false;last=ep;continue}if(!started){ctx.moveTo(ep.x,ep.y);started=true}else ctx.lineTo(ep.x,ep.y);last=ep}ctx.stroke();ctx.setLineDash([]);ctx.restore()}
+function drawElectrons(l,m,t,failed){const n=electronCount(m,failed);if(!n)return;for(let i=0;i<n;i++){const ep=electronPosition(i,l,m,t);if(ep.status==='recombined'&&ep.a>.15)recombFlash(ep.x,ep.y,t,ep.seed);drawElectronTrail(i,l,m,t);const rp=screenSized(3.4,7.0);ctx.save();ctx.globalAlpha=.32+.68*ep.a;ctx.fillStyle='#58dcff';ctx.shadowColor='#58dcff';ctx.shadowBlur=lerp(7,14,clamp((camera.zoom-7)/11,0,1));ctx.beginPath();ctx.arc(ep.x,ep.y,rp,0,Math.PI*2);ctx.fill();ctx.restore();if(camera.zoom>=8)drawLocalField(ep.x,ep.y,-1);if(camera.zoom>=5.5){registerHit('electron',ep.x,ep.y,screenSized(8,14),{id:i,status:ep.status,region:electronRegion(ep),p:ep.p,bs:ep.bs,be:ep.be})}if(app.selectedKey?.type==='electron'&&app.selectedKey.id===i){app.selected={type:'electron',x:ep.x,y:ep.y,r:screenSized(11,16),meta:{id:i,status:ep.status,region:electronRegion(ep),p:ep.p,bs:ep.bs,be:ep.be},priority:100}}}}
+function holePopulation(p,l,m,dep){const doping=clamp((p.baseExp-14)/5.5,.03,1),neutral=Math.max(0,(dep.bcL-dep.ebR)/Math.max(15,l.bW)),geom=clamp(l.bW/160,.25,1.8);return Math.round(clamp(6+58*doping*geom*neutral,4,74))}
+function drawBaseContact(l,m,t,dep){
+ const x=(l.b0+l.b1)/2,barW=clamp(l.bW*.42,34,72),barH=screenSized(9,14),stemH=screenSized(15,22);
+ ctx.save();
+ ctx.fillStyle='#aeb9c7';ctx.shadowColor='#d8e6f5';ctx.shadowBlur=screenSized(3,6)*camera.zoom*.25;
+ ctx.fillRect(x-barW/2,l.yTop-barH-stemH,barW,barH);ctx.fillRect(x-screenSized(3,5),l.yTop-stemH,screenSized(6,10),stemH);
+ ctx.fillStyle='#e5eef8';ctx.textAlign='center';ctx.textBaseline='bottom';ctx.font=`700 ${screenSized(10,14)}px system-ui`;ctx.fillText('B',x,l.yTop-barH-stemH-screenSized(3,5));
+ ctx.restore();
+ registerHit('base-contact',x,l.yTop-stemH*.6,screenSized(14,22),{terminal:'B',carrier:'holes',ib:m.ib});
+ // Base current is visualized as hole supply through the physical B contact. The count follows calculated IB and base losses.
+ if(m.ib<=1e-10||state.failed)return;
+ const ibLevel=clamp((log10(m.ib*1e6+1))/3.2,0,1),lossNeed=clamp(.22+.78*Math.max(m.recombBase,m.lostInjection),.2,1),count=Math.max(1,Math.round(1+ibLevel*7*lossNeed));
+ for(let i=0;i<count;i++){
+   const phase=frac(t*(.16+.12*ibLevel)+i/count+hash(900+i)*.17),targetY=lerp(l.yTop+screenSized(7,10),Math.min(l.yBot-screenSized(18,26),l.yTop+(l.yBot-l.yTop)*.42),phase),spread=lerp(screenSized(4,6),Math.min(l.bW*.34,screenSized(26,40)),phase),hx=x+(hash(930+i)-.5)*spread*2;
+   ctx.save();ctx.strokeStyle='#ffc067';ctx.lineWidth=screenSized(2,3.2);ctx.shadowColor='#ff9d43';ctx.shadowBlur=screenSized(5,9)*camera.zoom*.35;ctx.globalAlpha=.58+.38*ibLevel;ctx.beginPath();ctx.arc(hx,targetY,screenSized(4.2,7.2),0,Math.PI*2);ctx.stroke();ctx.restore();
+   if(camera.zoom>=4.5)registerHit('hole',hx,targetY,screenSized(10,16),{id:2000+i,representation:'base-contact-flow',source:'B contact',ib:m.ib});
+ }
+}
+function drawHolesAggregate(l,m,t,dep){const n=holePopulation(params,l,m,dep),left=Math.max(l.b0+4,dep.ebR+2),right=Math.min(l.b1-4,dep.bcL-2);if(right<=left+4)return;const speed=.016+.045*clamp(Math.pow(10,params.baseCurrentLog+1)/100,0,1);ctx.save();ctx.strokeStyle='#ffb45f';ctx.lineWidth=screenSized(1.8,2.8);ctx.shadowColor='#ff9f45';ctx.shadowBlur=screenSized(5,9)*camera.zoom;for(let i=0;i<n;i++){const f=frac(hash(i*17+8)-t*speed*(.6+hash(i+99)*.8)),x=lerp(left,right,f),y=lerp(l.yTop+14,l.yBot-14,hash(i*31+4))+Math.sin(t*1.4+i)*1.1;ctx.globalAlpha=.42+.5*hash(i+5);ctx.beginPath();ctx.arc(x,y,screenSized(4,6),0,Math.PI*2);ctx.stroke();if(camera.zoom>=5.5)registerHit('hole',x,y,screenSized(9,14),{id:i,representation:'aggregate'})}ctx.restore();const inj=clamp(m.lostInjection*18*Math.pow(10,params.baseCurrentLog+.3),0,8);ctx.save();ctx.strokeStyle='#ffc070';ctx.lineWidth=screenSized(1.7,2.6);for(let i=0;i<Math.floor(inj);i++){const f=frac(t*.09+i/Math.max(1,inj)),x=lerp(l.e1+4,l.e1-dep.eb*.72,f),y=lerp(l.yTop+30,l.yBot-30,hash(i+170));ctx.globalAlpha=.7*(1-f);ctx.beginPath();ctx.arc(x,y,screenSized(3.6,5.5),0,Math.PI*2);ctx.stroke();if(camera.zoom>=5.5)registerHit('hole',x,y,screenSized(9,14),{id:1000+i,representation:'injected'})}ctx.restore()}
+function drawHoleMicroscope(l,m,t,dep){const left=Math.max(l.b0+5,dep.ebR+3),right=Math.min(l.b1-5,dep.bcL-3);if(right<=left+5)return;ctx.save();const rows=6,cols=Math.max(4,Math.min(20,Math.floor((right-left)/22))),dx=(right-left)/Math.max(1,cols-1),dy=(l.yBot-l.yTop-46)/(rows-1),baseY=l.yTop+23;ctx.lineWidth=screenSized(.8,1.35);ctx.strokeStyle='#b9cbe055';for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const x=left+c*dx,y=baseY+r*dy;ctx.beginPath();ctx.arc(x,y,screenSized(2.3,4.4),0,Math.PI*2);ctx.stroke()}const activeRows=Math.min(rows,Math.max(1,Math.round(holePopulation(params,l,m,dep)/15)));for(let r=0;r<activeRows;r++){const phase=frac(t*.33+hash(r*11+4)),pos=phase*(cols-1),c0=Math.floor(pos),f=pos-c0,holeX=left+pos*dx,holeY=baseY+r*dy;ctx.strokeStyle='#ffb45f';ctx.shadowColor='#ff9d43';ctx.shadowBlur=lerp(8,14,clamp((camera.zoom-8)/10,0,1));ctx.lineWidth=screenSized(2,3);ctx.globalAlpha=.95;ctx.beginPath();ctx.arc(holeX,holeY,screenSized(6,10),0,Math.PI*2);ctx.stroke();drawLocalField(holeX,holeY,+1);registerHit('hole',holeX,holeY,screenSized(11,16),{id:r,row:r,representation:'vacancy-hop'});if(app.selectedKey?.type==='hole'&&app.selectedKey.id===r){app.selected={type:'hole',x:holeX,y:holeY,r:screenSized(12,17),meta:{id:r,row:r,representation:'vacancy-hop'},priority:98}}if(c0>0){const ex=left+(c0-1+f)*dx,ey=holeY;ctx.fillStyle='#58dcff';ctx.shadowColor='#58dcff';ctx.shadowBlur=8;ctx.beginPath();ctx.arc(ex,ey,screenSized(3.2,5.4),0,Math.PI*2);ctx.fill();ctx.strokeStyle='#70e2f2';ctx.globalAlpha=.62;ctx.lineWidth=screenSized(1.3,2.1);ctx.beginPath();ctx.moveTo(ex+screenSized(4,7),ey);ctx.lineTo(holeX-screenSized(6,10),holeY);ctx.stroke()}}ctx.restore()}
+function drawAvalanche(l,m,t,failed){if(m.avalancheRatio<.88||failed)return;const sev=clamp((m.avalancheRatio-.88)/.35,0,1),count=Math.round(3+sev*18);ctx.save();ctx.strokeStyle='#e7b2ff';ctx.shadowColor='#c75cff';ctx.shadowBlur=11/Math.sqrt(camera.zoom);ctx.lineWidth=1/camera.zoom;for(let i=0;i<count;i++){const x=l.b1+lerp(-22,80,hash(i*7+5)),y=lerp(l.yTop+18,l.yBot-18,hash(i*9+1)),ph=frac(t*4+i*.17);ctx.globalAlpha=.2+.65*(1-ph);ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+12+ph*24,y+(hash(i+2)-.5)*16);ctx.stroke()}ctx.restore()}
+function drawHotspot(l,st,m){const tc=clamp((st.tempC-95)/180,0,1),tb=clamp((st.tempB-95)/180,0,1);ctx.save();if(tc>0){const x=l.b1+Math.min(85,l.cW*.22),y=(l.yTop+l.yBot)/2,r=45+tc*85,g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,`rgba(255,240,150,${.2+.38*tc})`);g.addColorStop(.34,`rgba(255,72,35,${.14+.36*tc})`);g.addColorStop(1,'rgba(255,0,0,0)');ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2);if(tc>.25)registerHit('hotspot',x,y,r*.45,{temp:st.tempC})}if(tb>0){const x=l.e1,y=(l.yTop+l.yBot)/2,r=32+tb*60,g=ctx.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,`rgba(255,230,120,${.18+.36*tb})`);g.addColorStop(.4,`rgba(255,78,40,${.14+.31*tb})`);g.addColorStop(1,'rgba(255,0,0,0)');ctx.fillStyle=g;ctx.fillRect(x-r,y-r,r*2,r*2)}if(st.failed){let x=st.failureMode==='base_emitter'?l.e1:l.b1+l.cW*.12,y=(l.yTop+l.yBot)/2;ctx.strokeStyle='#13090a';ctx.lineWidth=4/camera.zoom;ctx.globalAlpha=.9;ctx.beginPath();for(let k=0;k<8;k++){const xx=x+(hash(k+55)-.5)*65,yy=y+(hash(k+77)-.5)*150;k?ctx.lineTo(xx,yy):ctx.moveTo(xx,yy)}ctx.stroke()}ctx.restore()}
+function overlay(m,st){ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#07101be6';ctx.strokeStyle='#20344e';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(15,13,326,84,11);ctx.fill();ctx.stroke();ctx.fillStyle='#dfeaf8';ctx.font='700 14px system-ui';ctx.fillText(`NPN · ${m.mode}`,29,36);ctx.font='11px ui-monospace,monospace';ctx.fillStyle='#9fb2cf';ctx.fillText(`IB ${fmtCurrent(m.ib)}   IC ${fmtCurrent(m.ic)}   β ${m.beta.toFixed(m.beta<10?2:1)}`,29,57);ctx.fillText(`recomb ${(m.recombBase*100).toFixed(1)}%   Tbase ${Math.round(st.tempB)}°C   Tc ${Math.round(st.tempC)}°C`,29,77);ctx.restore()}
+// Shared microscope background and crystal support for ALL Silicon Lab elements.
+// Intentionally common: switching components must never change the stage environment.
+function paintMicroscopeBackground(){
+ ctx.setTransform(1,0,0,1,0,0);
+ ctx.clearRect(0,0,canvas.width,canvas.height);
+ const bg=ctx.createLinearGradient(0,0,0,canvas.height);
+ bg.addColorStop(0,'#040810');bg.addColorStop(1,'#070c16');
+ ctx.fillStyle=bg;ctx.fillRect(0,0,canvas.width,canvas.height);
+}
+function paintCrystalMount(left,right,top,bottom){
+ ctx.shadowColor='#000';ctx.shadowBlur=25/camera.zoom;
+ ctx.fillStyle='#0c1420';
+ ctx.fillRect(left-16,top-16,right-left+32,bottom-top+32);
+ ctx.shadowBlur=0;
+}
+function render(s=null){const p=s?s.params:params,m=s?s.metrics:(state.lastMetrics||calcMetrics(params,state)),st=s||state,t=s?s.t:state.t;app.hitObjects=[];paintMicroscopeBackground();const l=crystalLayout(p),dep=depletionGeom(l,m);ctx.save();applyTransform();paintCrystalMount(l.left,l.right,l.yTop,l.yBot);drawRegions(l,p,st);drawLattice(l,p,dep);drawDepletion(l,m,dep);drawFixedIons(l,m,dep);drawJunctionField(l,m,dep,t);drawBaseContact(l,m,t,dep);if(camera.zoom>=7.5)drawHoleMicroscope(l,m,t,dep);else drawHolesAggregate(l,m,t,dep);drawElectrons(l,m,t,st.failed);drawAvalanche(l,m,t,st.failed);drawHotspot(l,st,m);ctx.fillStyle='#9aa8ba';const cy=(l.yTop+l.yBot)/2;ctx.fillRect(l.e0-16,cy-30,16,60);ctx.fillRect(l.c1,cy-30,16,60);ctx.restore();overlay(m,st);drawSelection()}
+function drawSelection(){if(app.mode!=='explain'||!app.selected)return;const o=app.selected,s=worldToScreen(o.x,o.y);ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.strokeStyle='#fff3a4';ctx.shadowColor='#f6c966';ctx.shadowBlur=14;ctx.lineWidth=2.5;ctx.beginPath();ctx.arc(s.x,s.y,Math.max(15,o.r*camera.zoom*.55),0,Math.PI*2);ctx.stroke();ctx.restore()}
+function selectAt(sx,sy){if(activeDevice==='diode')return diodeSelectAt(sx,sy);let best=null;for(const o of app.hitObjects){const sc=worldToScreen(o.x,o.y),d=Math.hypot(sx-sc.x,sy-sc.y),tiny=['electron','hole','fixed-ion','field-arrow','field-line'].includes(o.type),radius=tiny?Math.max(28,o.r*camera.zoom):Math.max(22,o.r*camera.zoom),inside=d<=radius;if(!inside)continue;const score=(o.priority||50)*4-d;if(!best||score>best.score)best={o,score,d}}if(best){app.selected=best.o;app.selectedKey={type:best.o.type,id:best.o.meta?.id??best.o.meta?.index??null,junction:best.o.meta?.junction??null,line:best.o.meta?.line??null,row:best.o.meta?.row??null,col:best.o.meta?.col??null};if(['electron','hole'].includes(best.o.type))running=false;updateExplainCard();const c=$("#explainCallout");c.hidden=false;c.innerHTML=`<b>${explainTitle(best.o.type)}</b><span>выбрано</span>`}else{$("#explainCallout").hidden=true;app.selected=null;app.selectedKey=null;updateExplainCard()}}
+function explainTitle(type){return ({emitter:'Эмиттер',base:'База',collector:'Коллектор',eb:'Переход E–B',bc:'Переход B–C','depletion-eb':'Обеднённая область E–B','depletion-bc':'Обеднённая область B–C','fixed-ion':'Фиксированный ион','base-contact':'Контакт базы',electron:'Электрон',hole:'Дырка / вакансия',hotspot:'Hotspot','field-eb':'Электрическое поле E–B','field-bc':'Электрическое поле B–C','field-arrow':'Стрелка электрического поля','field-line':'Силовая линия электрического поля'})[type]||type}
+function electronPathHTML(o){const id=o.meta.id,m=state.lastMetrics||calcMetrics(params,state),l=crystalLayout(params),ep=electronPosition(id,l,m,state.t),speed=.13+.11*clamp(log10(m.ic*1000+1)/3,0,1),baseShare=Math.max(.001,ep.be-ep.bs),modelBaseTime=baseShare/Math.max(.001,speed);let result=ep.status==='recombined'?'Рекомбинировал в базе':ep.status==='not-collected'?'Не был собран коллектором':ep.status==='reverse-injection'?'Не прошёл нормальную эмиттерную инжекцию':'Движется / собирается коллектором';return `<h3>Путь визуального носителя</h3><div class="path-list"><div class="path-step"><i>1</i><span><b>Источник:</b> N-эмиттер.</span></div><div class="path-step"><i>2</i><span><b>E–B:</b> инжекция электрона в P-базу.</span></div><div class="path-step"><i>3</i><span><b>База:</b> диффузионный перенос; модельная доля цикла в базе ${(baseShare*100).toFixed(1)} %, условное время ${modelBaseTime.toFixed(2)} ед.</span></div><div class="path-step"><i>4</i><span><b>B–C:</b> если электрон дошёл до depletion region, поле быстро собирает его к коллектору.</span></div><div class="path-step"><i>5</i><span><b>Текущий исход:</b> ${result}.</span></div></div><p class="explain-tip">Жёлтая пунктирная линия на кристалле показывает недавнюю траекторию этого визуального носителя. В v0.5 это учебная траектория qualitative-модели, а не измерение реального отдельного электрона.</p>`}
+function holePathHTML(o){
+ const rep=o.meta?.representation||'вакансия';
+ if(rep==='base-contact-flow')return `<h3>Путь базового носителя</h3><div class="path-list"><div class="path-step"><i>1</i><span><b>Источник:</b> внешний вывод B и металлический контакт базы.</span></div><div class="path-step"><i>2</i><span><b>Вход:</b> поток дырок входит именно через границу P-базы в месте контакта.</span></div><div class="path-step"><i>3</i><span><b>Внутри базы:</b> дырки участвуют в поддержании базового тока и пополняют носители, расходуемые рекомбинацией.</span></div><div class="path-step"><i>4</i><span><b>Связь:</b> чем больше рассчитанный I<sub>B</sub> и потребность базы в носителях, тем заметнее этот поток.</span></div></div>`;
+ return `<h3>Как движется дырка</h3><div class="path-list"><div class="path-step"><i>1</i><span>Дырка — это вакансия, а не отдельный положительный шарик.</span></div><div class="path-step"><i>2</i><span>Соседний электрон занимает вакансию.</span></div><div class="path-step"><i>3</i><span>Новая вакансия появляется там, откуда ушёл электрон.</span></div><div class="path-step"><i>4</i><span>Последовательность electron hop визуально выглядит как движение дырки.</span></div></div>`;
+}
+function explainHTML(o){const m=state.lastMetrics||calcMetrics(params,state),type=o?.type;if(!type)return `<h3>Начни с объекта</h3><p>Увеличь переход и нажми на интересующую область. В глубоком микроскопе выбираются все видимые электроны, вакансии, ионы и элементы визуализации поля.</p>`;
+ const common={
+ emitter:`<h3>Эмиттер</h3><p>Сильно легированная N-область, задача которой — эффективно инжектировать электроны в базу.</p><ul><li>N<sub>E</sub> = <span class="context-value">10^${params.emitterExp.toFixed(2)} см⁻³</span>.</li><li>Эффективность эмиттерной инжекции γ = <span class="context-value">${fmtPct(m.gamma)}</span>.</li></ul><p class="explain-tip">Чем γ ближе к 100 %, тем сильнее желаемая электронная инжекция доминирует над встречной инжекцией дырок.</p>`,
+ base:`<h3>База</h3><p>Тонкая P-область. Электроны проходят её главным образом диффузией по градиенту концентрации.</p><ul><li>Толщина <span class="context-value">${params.baseWidth.toFixed(2)} µm</span>.</li><li>Рекомбинация <span class="context-value">${fmtPct(m.recombBase)}</span>.</li><li>Коэффициент переноса через базу α = <span class="context-value">${fmtPct(m.alphaT)}</span>.</li></ul>`,
+ collector:`<h3>Коллектор</h3><p>N-область, которая собирает электроны после базы и должна выдерживать обратное напряжение B–C.</p><ul><li>Площадь ${params.collectorArea.toFixed(2)} mm².</li><li>J<sub>C</sub> ${m.j.toFixed(2)} A/mm².</li><li>Оценка V<sub>BR</sub> ${m.vbr.toFixed(1)} V.</li></ul>`,
+ eb:`<h3>Переход E–B</h3><p>В активном режиме он прямосмещён и управляет инжекцией носителей.</p><p>Текущий V<sub>BE</sub> = <span class="context-value">${m.vbe.toFixed(3)} V</span>.</p>`,
+ bc:`<h3>Переход B–C</h3><p>В активном режиме обратносмещён. Поле направлено от N-коллектора к P-базе, а сила на электрон — противоположно полю.</p><ul><li>V<sub>CB</sub> ${m.vcb.toFixed(2)} V.</li><li>V<sub>BR</sub> ${m.vbr.toFixed(1)} V.</li></ul>`,
+ 'depletion-eb':`<h3>Обеднённая область E–B</h3><p>Здесь мало подвижных носителей, но остаются связанные с решёткой заряженные центры. Они участвуют в формировании внутреннего поля.</p>`,
+ 'depletion-bc':`<h3>Обеднённая область B–C</h3><p>Подвижных носителей мало, зато фиксированные ионы создают пространственный заряд и сильное поле. При росте обратного смещения область расширяется.</p>`,
+ 'fixed-ion':`<h3>Фиксированный ион</h3><p>Это заряженный атом примеси, связанный с решёткой, а не свободный носитель.</p><ul><li>Знак: <span class="context-value">${o.meta.sign||'±'}</span>.</li><li>Переход: ${o.meta.junction||'—'}.</li><li>Сторона: ${o.meta.side||'—'}.</li></ul><p>Совокупность таких неподвижных зарядов создаёт внутреннее электрическое поле p–n-перехода.</p>`,
+ 'base-contact':`<h3>Контакт базы B</h3><p>Металлический контакт связывает внешний вывод B с P-базой. В текущем изолированном представлении он расположен сверху базы.</p><div class="current-box">I<sub>B</sub> сейчас: <b>${fmtCurrent(m.ib)}</b><br>Визуальный поток: дырки через B-contact → P-база.</div><p>Основной электронный поток транзистора приходит в базу из эмиттера. Поток через B-contact показывает снабжение базы дырками и базовый ток, связанный прежде всего с рекомбинацией и встречной инжекцией.</p><p class="explain-tip">Когда появится режим «Схема ↔ Микроскоп», контакт будет автоматически согласовываться с ориентацией и подключением элемента.</p>`,
+ electron:`<h3>Электрон #${o.meta.id??'—'}</h3><p>Отрицательный носитель заряда. Локальное поле направлено <b>к электрону</b>.</p><p>Сейчас: <span class="context-value">${o.meta.status||'движется'}</span>; область: <span class="context-value">${o.meta.region||'—'}</span>.</p>${electronPathHTML(o)}`,
+ hole:`<h3>Дырка / вакансия #${o.meta.id??'—'}</h3><p>Не отдельный положительный шарик, а отсутствие электрона в доступном состоянии. В глубоком микроскопе её движение показано через последовательность electron hop → vacancy moves.</p><p>Режим визуализации: <span class="context-value">${o.meta.representation||'вакансия'}</span>.</p>${holePathHTML(o)}`,
+ hotspot:`<h3>Локальный hotspot</h3><p>Следствие рассчитанных мощности и плотности тока, а не декоративный эффект.</p><ul><li>T коллектора ${fmtTemp(state.tempC)}.</li><li>J<sub>C</sub> ${m.j.toFixed(2)} A/mm².</li><li>P ${m.power.toFixed(2)} W.</li></ul>`,
+ 'field-eb':`<h3>Электрическое поле E–B</h3><p>Цвет показывает относительную интенсивность. Направление задаётся силой на положительный пробный заряд.</p><p>Текущая относительная интенсивность: <span class="context-value">${m.fieldEB.toFixed(2)}</span>.</p>`,
+ 'field-bc':`<h3>Электрическое поле B–C</h3><p>Цвет показывает интенсивность, стрелки/линии — направление. Для положительного пробного заряда поле идёт N → P. Электрон отрицателен, поэтому сила на него направлена противоположно — к коллектору.</p><p>Текущая относительная интенсивность: <span class="context-value">${m.fieldBC.toFixed(2)}</span>.</p>`,
+ 'field-arrow':`<h3>Стрелка электрического поля ${o.meta.junction||''}</h3><p>Это <b>не движение электрона</b>. Стрелка показывает направление вектора электрического поля — то есть направление силы на положительный пробный заряд.</p><p>Для электрона сила будет направлена противоположно стрелке.</p><div class="current-box">Переход: <b>${o.meta.junction||'—'}</b><br>Относительная интенсивность: <b>${Number(o.meta.strength||0).toFixed(2)}</b></div>`,
+ 'field-line':`<h3>Силовая линия электрического поля ${o.meta.junction||''}</h3><p>Силовая линия визуализирует направление и пространственную структуру того же поля, что и режим «Стрелки».</p><p>Стрелочный наконечник задаёт направление поля для положительного пробного заряда.</p>`
+ };return common[type]||`<h3>${explainTitle(type)}</h3><p>Физический объект выбран.</p>`}
+function updateExplainCard(){if(app.mode!=='explain')return;$("#explainCard").innerHTML=explainHTML(app.selected)}
+
+function diagText(m,st){if(st.failed){const t={breakdown_bc:'Переход B–C повреждён лавинным режимом.',base_emitter:'Переход B–E повреждён перегрузкой.',current_hotspot:'Коллектор разрушен локальной токовой/тепловой перегрузкой.',thermal:'Кристалл разрушен перегревом.'};return `<strong>Отказ.</strong> ${t[st.failureMode]||t.thermal}`}if(m.mode==='CUTOFF')return '<strong>Отсечка.</strong> Инжекция почти отсутствует.';if(m.mode==='SATURATION')return '<strong>Насыщение.</strong> B–C уже не работает как нормально обратносмещённый собирающий переход.';if(m.mode==='AVALANCHE')return '<strong>Опасное поле B–C.</strong> Переход близок к пробою.';if(m.recombBase>.35)return '<strong>База теряет носители.</strong> Большая доля электронов рекомбинирует до коллектора.';if(m.j>8)return '<strong>Высокая плотность тока.</strong> Формируется hotspot коллектора.';if(m.gamma<.9)return '<strong>Плохая эмиттерная эффективность.</strong> Встречная инжекция дырок становится существенной.';return '<strong>Активный режим.</strong> Эмиттер инжектирует электроны, база переносит их диффузией, поле B–C собирает их.'}
+function causeEvents(m,st){
+ const e=(id,label,title,focus)=>({id,label,title,focus});
+ if(st.failed){
+  if(st.failureMode==='breakdown_bc')return [e('field-bc',`Поле B–C ${m.fieldBC.toFixed(2)}`,'Сильное поле B–C','bc'),e('avalanche',`Лавина ×${m.avalancheMult.toFixed(1)}`,'Лавинное умножение','bc'),e('damage-field','Damage B–C','Накопление повреждения','bc'),e('failure','Отказ','Разрушение перехода','bc')];
+  if(st.failureMode==='base_emitter')return [e('ib',`I_B ${fmtCurrent(m.ib)}`,'Ток базы','base'),e('base-heat',`Нагрев B–E ${fmtTemp(st.tempB)}`,'Нагрев базы/E–B','eb'),e('damage-base','Damage B–E','Накопление повреждения','eb'),e('failure','Отказ','Разрушение перехода','eb')];
+  return [e('power',`P ${m.power.toFixed(2)} W`,'Рассеиваемая мощность','all'),e('jc',`J_C ${m.j.toFixed(1)}`,'Плотность тока','bc'),e('thermal',`T_C ${fmtTemp(st.tempC)}`,'Тепловой hotspot','bc'),e('failure','Отказ','Разрушение','bc')];
+ }
+ if(m.mode==='AVALANCHE')return [e('vbr',`V_CB ${m.vcb.toFixed(1)} V`,'Обратное напряжение B–C','bc'),e('field-bc',`Поле B–C ${m.fieldBC.toFixed(2)}`,'Рост поля B–C','bc'),e('avalanche',`Лавина ×${m.avalancheMult.toFixed(1)}`,'Лавинный процесс','bc')];
+ if(m.recombBase>.12)return [e('base-width',`База ${params.baseWidth.toFixed(2)} µm`,'Длина пути через базу','base'),e('recomb',`Рекомб. ${fmtPct(m.recombBase)}`,'Рекомбинация в базе','base'),e('alpha',`α ${fmtPct(m.alphaT)}`,'Перенос через базу','base'),e('beta',`β ${m.beta.toFixed(1)}`,'Эффективное усиление','all')];
+ if(m.j>6)return [e('ic',`I_C ${fmtCurrent(m.ic)}`,'Коллекторный ток','bc'),e('area',`Площадь ${params.collectorArea.toFixed(2)} mm²`,'Площадь коллектора','bc'),e('jc',`J_C ${m.j.toFixed(1)}`,'Плотность тока','bc'),e('thermal',`T_C ${fmtTemp(st.tempC)}`,'Формирование hotspot','bc')];
+ return [e('injection',`Инжекция γ ${fmtPct(m.gamma)}`,'Эмиттерная инжекция','eb'),e('base-transfer',`Перенос α ${fmtPct(m.alphaT)}`,'Перенос через базу','base'),e('collection',`Сбор B–C ${fmtPct(m.capture)}`,'Сбор электронов полем B–C','bc'),e('ic',`I_C ${fmtCurrent(m.ic)}`,'Коллекторный ток','bc')];
+}
+function causeEventBody(ev,m,st){
+ const bodies={
+  injection:`<div class="current-box"><b>Сейчас:</b> γ = ${fmtPct(m.gamma)}</div><h3>Что происходит</h3><p>Прямосмещённый переход E–B инжектирует носители. Для нормального NPN желаемый поток электронов из эмиттера должен сильно преобладать над встречной инжекцией дырок.</p><h3>От чего зависит</h3><p>Прежде всего от отношения легирования эмиттера и базы и состояния E–B.</p><h3>К чему ведёт</h3><p>Чем выше γ, тем больше доля полезной электронной инжекции, которая затем может пройти базу.</p>`,
+  'base-transfer':`<div class="current-box"><b>Сейчас:</b> α = ${fmtPct(m.alphaT)}, рекомбинация ${fmtPct(m.recombBase)}</div><h3>Что происходит</h3><p>Электроны проходят P-базу главным образом диффузией. Часть успевает рекомбинировать, остальные достигают области B–C.</p><h3>От чего зависит</h3><p>От толщины базы, легирования, температуры и условной длины диффузии.</p><h3>К чему ведёт</h3><p>α непосредственно определяет, какая доля инжектированного потока дойдёт до коллектора.</p>`,
+  collection:`<div class="current-box"><b>Сейчас:</b> эффективность сбора ${fmtPct(m.capture)}</div><h3>Что происходит</h3><p>Когда электрон достигает обеднённой области B–C, внутреннее электрическое поле быстро переносит его в коллектор.</p><h3>Важно</h3><p>Стрелка поля показывает силу на положительный пробный заряд; электрон отрицателен и испытывает силу в противоположную сторону.</p>`,
+  ic:`<div class="current-box"><b>Сейчас:</b> I<sub>C</sub> = ${fmtCurrent(m.ic)}</div><h3>Что это</h3><p>Итоговый поток электронов, собранных коллектором, проявляется как коллекторный ток.</p><h3>Связь с предыдущими событиями</h3><p>I<sub>C</sub> является результатом инжекции эмиттера, переноса через базу и сбора B–C; энергия большой нагрузки приходит из внешнего источника.</p>`,
+  'base-width':`<div class="current-box"><b>Сейчас:</b> база ${params.baseWidth.toFixed(2)} µm</div><p>Чем длиннее путь через базу, тем больше времени электрон проводит в ней и тем выше вероятность рекомбинации.</p>`,
+  recomb:`<div class="current-box"><b>Сейчас:</b> ${fmtPct(m.recombBase)}</div><p>Рекомбинация удаляет часть инжектированных электронов до того, как они достигнут B–C. Базовый контакт пополняет дырки, участвующие в этом процессе.</p>`,
+  alpha:`<div class="current-box"><b>Сейчас:</b> α = ${fmtPct(m.alphaT)}</div><p>Коэффициент переноса показывает долю электронов, прошедших базу без рекомбинации.</p>`,
+  beta:`<div class="current-box"><b>Сейчас:</b> β = ${m.beta.toFixed(1)}</div><p>Эффективный коэффициент усиления — схемная характеристика, возникающая из физики инжекции, переноса и сбора. Он не является универсальной постоянной транзистора.</p>`,
+  area:`<div class="current-box"><b>Сейчас:</b> ${params.collectorArea.toFixed(2)} mm²</div><p>Та же величина I<sub>C</sub>, распределённая по меньшей площади, создаёт большую плотность тока.</p>`,
+  jc:`<div class="current-box"><b>Сейчас:</b> J<sub>C</sub> = ${m.j.toFixed(2)} A/mm²</div><p>Высокая плотность тока концентрирует тепловую нагрузку и способствует образованию локального hotspot.</p>`,
+  thermal:`<div class="current-box"><b>Сейчас:</b> T<sub>C</sub> = ${fmtTemp(st.tempC)}, P = ${m.power.toFixed(2)} W</div><p>Температура растёт как следствие рассчитанной электрической мощности и геометрии теплоотвода.</p>`,
+  power:`<div class="current-box"><b>Сейчас:</b> P = ${m.power.toFixed(2)} W</div><p>Одновременное наличие заметного V<sub>CE</sub> и I<sub>C</sub> означает, что внутри транзистора выделяется мощность.</p>`,
+  vbr:`<div class="current-box"><b>Сейчас:</b> V<sub>CB</sub> = ${m.vcb.toFixed(2)} V, V<sub>BR</sub> ≈ ${m.vbr.toFixed(1)} V</div><p>Рост обратного напряжения расширяет depletion region и усиливает поле B–C.</p>`,
+  'field-bc':`<div class="current-box"><b>Сейчас:</b> относительная интенсивность ${m.fieldBC.toFixed(2)}</div><p>Поле B–C создаётся пространственным зарядом в обеднённой области. При чрезмерной напряжённости возможен лавинный процесс.</p>`,
+  avalanche:`<div class="current-box"><b>Сейчас:</b> avalanche multiplier ×${m.avalancheMult.toFixed(1)}</div><p>Сильное поле ускоряет носители настолько, что в qualitative-модели начинается лавинное умножение и быстро растёт риск повреждения.</p>`,
+  ib:`<div class="current-box"><b>Сейчас:</b> I<sub>B</sub> = ${fmtCurrent(m.ib)}</div><p>Базовый ток связан с потоком через B-contact. В микроскопе он визуализируется как поток дырок, входящих в P-базу через контакт.</p>`,
+  'base-heat':`<div class="current-box"><b>Сейчас:</b> T<sub>B</sub> = ${fmtTemp(st.tempB)}</div><p>Слишком большой базовый ток повышает мощность в области E–B и может привести к повреждению перехода.</p>`,
+  'damage-field':`<p>Повреждение накапливается из-за чрезмерного лавинного режима B–C. Это состояние Physics Core, а не заранее включённая анимация.</p>`,
+  'damage-base':`<p>Повреждение E–B накапливается при сочетании чрезмерного базового тока и температуры.</p>`,
+  failure:`<p>Отказ — результат накопленного физического damage в модели. После него изменение ползунков не «лечит» кристалл: нужен новый прогон.</p>`
+ };
+ const formulaKey=({injection:'gamma','base-transfer':'alpha',alpha:'alpha',beta:'beta',ic:'ic',jc:'jc',thermal:'tc',power:'power',vbr:'margin',ib:'ib'})[ev.id];return (bodies[ev.id]||`<p>${ev.title} — этап текущей причинно-следственной цепочки.</p>`)+(formulaKey?formulaHTML(formulaKey,m):'')+`<div class="sheet-actions"><button class="btn" data-event-focus="${ev.focus||'all'}">Показать на кристалле</button></div>`;
+}
+function renderCauseChain(m,st){app.currentCauseEvents=causeEvents(m,st);const el=$("#causeChain"),sig=app.currentCauseEvents.map(ev=>ev.id).join('|');if(el.dataset.signature!==sig){el.dataset.signature=sig;el.innerHTML=app.currentCauseEvents.map((ev,i)=>`${i?'<span class="cause-arrow" aria-hidden="true"></span>':''}<button class="cause-event" data-cause-index="${i}">${ev.label}</button>`).join('')}else{el.querySelectorAll('.cause-event').forEach((b,i)=>{if(app.currentCauseEvents[i]&&b.textContent!==app.currentCauseEvents[i].label)b.textContent=app.currentCauseEvents[i].label})}}
+function focusCauseZone(zone){setMode('explain');if(zone==='base'){const l=crystalLayout(params);camera.targetCx=(l.b0+l.b1)/2;camera.targetCy=(l.yTop+l.yBot)/2;camera.targetZoom=Math.max(camera.targetZoom,8);clampCamera();return}centerCamera(zone==='eb'?'eb':zone==='bc'?'bc':'all',true);if(zone==='bc'&&camera.targetZoom<7){camera.targetZoom=7;clampCamera()}}
+$("#causeChain").addEventListener('click',e=>{const b=e.target.closest('[data-cause-index]');if(!b)return;const ev=app.currentCauseEvents[Number(b.dataset.causeIndex)],m=state.lastMetrics||calcMetrics(params,state);if(ev)openSheet('СОБЫТИЕ',ev.title,causeEventBody(ev,m,state))});
+
+function currentView(){return !running&&historyIndex>=0&&history[historyIndex]?history[historyIndex]:null}
+function updateUI(){const s=currentView(),m=s?s.metrics:(state.lastMetrics||calcMetrics(params,state)),st=s||state;$("#mIB").textContent=fmtCurrent(m.ib);$("#mIC").textContent=fmtCurrent(m.ic);$("#mBeta").textContent=m.beta.toFixed(m.beta<10?2:1);$("#mRec").textContent=fmtPct(m.recombBase);$("#mTB").textContent=fmtTemp(st.tempB);$("#mTC").textContent=fmtTemp(st.tempC);$("#mVBE").textContent=m.vbe.toFixed(3)+' V';$("#mVCB").textContent=m.vcb.toFixed(3)+' V';$("#mVBR").textContent=m.vbr.toFixed(1)+' V';$("#mMargin").textContent=(m.avalancheRatio*100).toFixed(1)+' %';$("#mJ").textContent=m.j.toFixed(m.j<10?2:1);$("#mP").textContent=m.power<1?(m.power*1000).toFixed(1)+' mW':m.power.toFixed(2)+' W';$("#mGamma").textContent=fmtPct(m.gamma);$("#mAlpha").textContent=fmtPct(m.alphaT);$("#diagnostic").innerHTML=diagText(m,st);renderCauseChain(m,st);const mb=$("#modeBadge");mb.textContent=m.mode;mb.className='sim-mode'+(m.mode==='FAILED'?' fail':(m.mode==='ACTIVE'||m.mode==='CUTOFF'?' active':' warn'));const fp=$("#failurePanel");if(st.failed){fp.hidden=false;const ex={breakdown_bc:'Сильное обратное поле B–C накопило лавинное повреждение.',base_emitter:'Ток базы превысил безопасный уровень выбранной геометрии.',current_hotspot:'Большой ток прошёл через слишком малую площадь коллектора.',thermal:'Сочетание VCE и IC дало чрезмерную мощность и температуру.'};$("#failureText").textContent=ex[st.failureMode]||ex.thermal}else fp.hidden=true;$("#timeRead").textContent=`t = ${st.t.toFixed(3)} s · кадр ${Math.max(0,historyIndex+1)}/${history.length}`;$("#playBtn").textContent=running?'❚❚':'▶';$("#playBtn").classList.toggle('active',running);$("#scrub").value=Math.max(0,historyIndex);$("#speedRead").textContent='×'+(simSpeed>=1?simSpeed.toFixed(simSpeed%1?2:0):simSpeed.toFixed(simSpeed<.01?3:2));if(app.mode==='explain'&&app.selected)updateExplainCard();if(app.mode==='tasks'&&app.activeTaskId){const t=taskById(app.activeTaskId);if(t)$("#taskProgress").innerHTML=taskProgressHTML(t,m)}}
+function branchFromHere(){if(historyIndex<0||!history[historyIndex])return;restore(history[historyIndex],true);history=history.slice(0,historyIndex+1);running=true;$("#scrub").max=history.length-1}
+
+$("#playBtn").addEventListener('click',()=>{if(!running&&historyIndex<history.length-1)branchFromHere();else running=!running});$("#backBtn").addEventListener('click',()=>{running=false;historyIndex=clamp(historyIndex-1,0,history.length-1);restore(history[historyIndex],true)});$("#forwardBtn").addEventListener('click',()=>{running=false;historyIndex=clamp(historyIndex+1,0,history.length-1);restore(history[historyIndex],true)});$("#scrub").addEventListener('input',e=>{running=false;historyIndex=Number(e.target.value);if(history[historyIndex])restore(history[historyIndex],true)});$("#branchBtn").addEventListener('click',branchFromHere);$("#speedCtl").addEventListener('input',e=>simSpeed=Math.pow(10,Number(e.target.value)));$("#newRunBtn").addEventListener('click',resetRun);$("#factoryBtn").addEventListener('click',()=>{const now=performance.now(),b=$("#factoryBtn");if(now<factoryConfirmUntil){Object.assign(params,defaults);updateControls();resetRun();centerCamera('all',true);factoryConfirmUntil=0;b.textContent='Стандартный NPN';return}factoryConfirmUntil=now+2500;b.textContent='Нажми ещё раз';setTimeout(()=>{if(performance.now()>=factoryConfirmUntil){factoryConfirmUntil=0;b.textContent='Стандартный NPN'}},2600)});$$('[data-preset]').forEach(b=>b.addEventListener('click',()=>applyPreset(b.dataset.preset)));$("#inspectFailureBtn").addEventListener('click',()=>{const failTime=state.failureTime,failMode=state.failureMode;if(failTime==null)return;running=false;let best=0;for(let i=0;i<history.length;i++)if(history[i].t<=failTime-.15)best=i;historyIndex=best;restore(history[best],true);camera.targetZoom=12;centerCamera(failMode==='base_emitter'?'eb':'bc',false)});
+window.addEventListener('keydown',e=>{if(e.code==='Space'&&!['INPUT','BUTTON'].includes(document.activeElement.tagName)){e.preventDefault();if(!running&&historyIndex<history.length-1)branchFromHere();else running=!running}else if(e.code==='ArrowLeft'&&!['INPUT'].includes(document.activeElement.tagName)){running=false;historyIndex=clamp(historyIndex-1,0,history.length-1);if(history[historyIndex])restore(history[historyIndex],true)}else if(e.code==='ArrowRight'&&!['INPUT'].includes(document.activeElement.tagName)){running=false;historyIndex=clamp(historyIndex+1,0,history.length-1);if(history[historyIndex])restore(history[historyIndex],true)}});
+
+// Visual controls
+$$('[data-field-style]').forEach(b=>b.addEventListener('click',()=>{visual.fieldStyle=b.dataset.fieldStyle;$$('[data-field-style]').forEach(x=>x.classList.toggle('active',x===b))}));$("#carrierFields").addEventListener('change',e=>visual.carrierFields=e.target.checked);$("#fixedIons").addEventListener('change',e=>visual.fixedIons=e.target.checked);$("#formulaAuto").addEventListener('change',e=>visual.formulaAuto=e.target.checked);
+
+function setMode(mode){app.mode=mode;$$('.mode-tab').forEach(b=>b.classList.toggle('active',b.dataset.mode===mode));$$('.mode-panel').forEach(p=>p.classList.remove('active'));$(`#modeIntro${mode==='experiment'?'Experiment':mode==='explain'?'Explain':'Tasks'}`).classList.add('active');$("#explainCallout").hidden=mode!=='explain'||!app.selected;if(mode==='explain')updateExplainCard();if(mode==='tasks'&&activeDevice!=='diode')renderTaskList();updateDiodeMode();requestAnimationFrame(syncDesktopPanels)}
+$$('.mode-tab').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));
+
+// v0.5 procedural task generator with mandatory solvability witness validation
+const diffNames={basic:'Базовый',medium:'Средний',advanced:'Продвинутый',engineering:'Инженерный'};
+function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return((t^t>>>14)>>>0)/4294967296}}
+function seedHash(s){let h=2166136261>>>0;for(const ch of String(s)){h^=ch.charCodeAt(0);h=Math.imul(h,16777619)}return h>>>0}
+function rr(r,a,b){return a+(b-a)*r()}function roundTo(v,n=2){const q=10**n;return Math.round(v*q)/q}
+function validationState(p){return {t:0,tempB:p.ambient,tempC:p.ambient,tempE:p.ambient,damageThermal:0,damageField:0,damageBase:0,failed:false,failureMode:'',failureTime:null,lastMetrics:null}}
+function estimatedThermal(p){const s=validationState(p),m=calcMetrics(p,s),cPower=m.pCollector*(.68+.32*clamp(m.j/10,0,1))+Math.max(0,m.avalancheMult-1)*.015,bPower=m.pBase+m.pCollector*(.035+.18*m.recombBase);return {m,tempC:p.ambient+cPower*m.rthC,tempB:p.ambient+bPower*m.rthB}}
+function validateGeneratedTask(t){if(!t||!t.solution||typeof t.check!=='function')return false;const sol=estimatedThermal(t.solution),ss=validationState(t.solution);ss.tempC=sol.tempC;ss.tempB=sol.tempB;const init=estimatedThermal(t.init),is=validationState(t.init);is.tempC=init.tempC;is.tempB=init.tempB;let good=false,bad=false;try{good=!!t.check(sol.m,ss,t.solution);bad=!!t.check(init.m,is,t.init)}catch(e){return false}return good&&!bad}
+function scenarioBase(seed,r,diff,family){return {id:`${diff}-${family}-${seed.toString(16).slice(-6)}`,difficulty:diff,scenario:`${diff.slice(0,3).toUpperCase()}-${seed.toString(16).slice(-6).toUpperCase()}`,validated:false}}
+function familyRecomb(seed,r,diff='basic'){const sol={...defaults,baseWidth:rr(r,.06,.24),baseExp:rr(r,15.3,16.4),baseCurrentLog:rr(r,-.6,.1),vce:rr(r,4,8)},sm=calcMetrics(sol,validationState(sol)),target=roundTo(clamp(sm.recombBase*100+rr(r,.8,2.2),1.8,7.5),1),init={...sol,baseWidth:rr(r,1.3,3.4),baseExp:rr(r,16,17.2)};return {...scenarioBase(seed,r,diff,'recomb'),title:'Потери в базе',summary:`Рекомбинация < ${target}%`,goal:`Добейся рекомбинации в базе ниже ${target} %.`,hint:'Начни с физического пути через базу: толщина и свойства P-области определяют вероятность потерь.',topics:['база','рекомбинация'],controls:['base'],init,solution:sol,check:(m,s)=>m.recombBase*100<target&&!s.failed}}
+function familyGamma(seed,r,diff='basic'){const sol={...defaults,emitterExp:rr(r,19,20),baseExp:rr(r,15.3,16.4),baseWidth:rr(r,.08,.35)},sm=calcMetrics(sol,validationState(sol)),target=roundTo(clamp(sm.gamma*100-rr(r,.3,1.2),96,99.5),1),init={...sol,emitterExp:rr(r,15.8,17.1),baseExp:rr(r,17.1,18.2)};return {...scenarioBase(seed,r,diff,'gamma'),title:'Эффективный эмиттер',summary:`γ > ${target}%`,goal:`Подними эффективность эмиттерной инжекции γ выше ${target} %.`,hint:'Сравни концентрацию примеси в N-эмиттере и P-базе.',topics:['эмиттер','база'],controls:['emitter','base'],init,solution:sol,check:(m,s)=>m.gamma*100>target&&!s.failed}}
+function familyAlpha(seed,r,diff='basic'){const sol={...defaults,baseWidth:rr(r,.05,.3),baseExp:rr(r,15.3,16.5)},sm=calcMetrics(sol,validationState(sol)),target=roundTo(clamp(sm.alphaT*100-rr(r,.5,1.5),94,99.2),1),init={...sol,baseWidth:rr(r,1.1,2.8)};return {...scenarioBase(seed,r,diff,'alpha'),title:'Перенос через базу',summary:`α > ${target}%`,goal:`Добейся коэффициента переноса через базу α выше ${target} %.`,hint:'α растёт, когда электроны реже рекомбинируют до B–C.',topics:['база','рекомбинация'],controls:['base'],init,solution:sol,check:(m,s)=>m.alphaT*100>target&&!s.failed}}
+function familySafeField(seed,r,diff='basic'){const sol={...defaults,collectorExp:rr(r,14.7,15.6),collectorWidth:rr(r,6,12),vce:rr(r,4,12)},sm=calcMetrics(sol,validationState(sol)),limit=roundTo(clamp(sm.avalancheRatio+.18,.35,.65),2),init={...sol,collectorExp:rr(r,17.2,18.6),collectorWidth:rr(r,.5,2),vce:rr(r,35,75)};return {...scenarioBase(seed,r,diff,'field'),title:'Запас B–C',summary:`V_CB/V_BR < ${(limit*100).toFixed(0)}%`,goal:`Сделай так, чтобы отношение V_CB к V_BR было ниже ${(limit*100).toFixed(0)} %, не разрушив транзистор.`,hint:'На запас по пробою влияют геометрия/легирование коллектора и обратное напряжение.',topics:['электрическое поле','обеднённая область','коллектор'],controls:['collector','field'],init,solution:sol,check:(m,s)=>m.avalancheRatio<limit&&!s.failed}}
+function familyBeta(seed,r,diff='medium'){const sol={...defaults,baseWidth:rr(r,.07,.32),emitterExp:rr(r,18.7,19.8),baseExp:rr(r,15.5,16.6),baseCurrentLog:rr(r,-.7,.2)},sm=calcMetrics(sol,validationState(sol)),target=roundTo(clamp(sm.beta*rr(r,.52,.72),45,160),0),init={...sol,baseWidth:rr(r,1.2,3.2),emitterExp:rr(r,16.5,17.8)};return {...scenarioBase(seed,r,diff,'beta'),title:'Усиление β',summary:`β > ${target}`,goal:`Добейся эффективного β выше ${target}.`,hint:'',topics:['усиление','база','эмиттер'],controls:[],init,solution:sol,check:(m,s)=>m.beta>target&&!s.failed}}
+function familyCollectorJ(seed,r,diff='medium'){const sol={...defaults,collectorArea:rr(r,1.2,4),baseCurrentLog:rr(r,.5,1.4),vce:rr(r,4,8)},sm=calcMetrics(sol,validationState(sol)),jMax=roundTo(sm.j+rr(r,.5,1.7),1),icMin=roundTo(sm.ic*rr(r,.55,.8),2),init={...sol,collectorArea:rr(r,.08,.25)};return {...scenarioBase(seed,r,diff,'jc'),title:'Разгрузи коллектор',summary:`J_C < ${jMax}, I_C > ${icMin} A`,goal:`Снизь J_C ниже ${jMax} A/mm², сохранив I_C выше ${icMin} A.`,hint:'',topics:['коллектор','тепловой режим'],controls:[],init,solution:sol,check:(m,s)=>m.j<jMax&&m.ic>icMin&&!s.failed}}
+function familyCurrentWindow(seed,r,diff='medium'){const sol={...defaults,baseWidth:rr(r,.08,.3),baseCurrentLog:rr(r,-.1,1),collectorArea:rr(r,1,3),vce:rr(r,3,8)},sm=calcMetrics(sol,validationState(sol)),lo=roundTo(sm.ic*.8,2),hi=roundTo(sm.ic*1.25+.02,2),init={...sol,baseCurrentLog:sol.baseCurrentLog-1.2};return {...scenarioBase(seed,r,diff,'ic'),title:'Попади в рабочий ток',summary:`I_C ${lo}–${hi} A`,goal:`Настрой I_C в диапазон ${lo}–${hi} A без отказа.`,hint:'',topics:['усиление','эмиттер','база','коллектор'],controls:[],init,solution:sol,check:(m,s)=>m.ic>=lo&&m.ic<=hi&&!s.failed}}
+function familyFieldMargin(seed,r,diff='medium'){const sol={...defaults,collectorExp:rr(r,14.5,15.7),collectorWidth:rr(r,5,12),vce:rr(r,8,20),baseCurrentLog:rr(r,-1,.2)},sm=calcMetrics(sol,validationState(sol)),ratioMax=roundTo(clamp(sm.avalancheRatio+.13,.28,.62),2),init={...sol,collectorExp:rr(r,17.3,18.5),collectorWidth:rr(r,.5,1.5),vce:rr(r,35,80)};return {...scenarioBase(seed,r,diff,'margin'),title:'Поле без лавины',summary:`B–C < ${(ratioMax*100).toFixed(0)}% V_BR`,goal:`Верни B–C в безопасный режим: V_CB/V_BR ниже ${(ratioMax*100).toFixed(0)} %.`,hint:'',topics:['электрическое поле','пробой','коллектор'],controls:[],init,solution:sol,check:(m,s)=>m.avalancheRatio<ratioMax&&!s.failed}}
+function familyGainPower(seed,r,diff='advanced'){const sol={...defaults,baseWidth:rr(r,.06,.22),emitterExp:rr(r,19,19.8),baseExp:rr(r,15.4,16.3),collectorArea:rr(r,1.4,3.2),baseCurrentLog:rr(r,-.1,.7),vce:rr(r,2.5,6)},th=estimatedThermal(sol),betaMin=roundTo(clamp(th.m.beta*.6,70,170),0),pMax=roundTo(th.m.power*1.35+.08,2),jMax=roundTo(th.m.j*1.4+.3,1),init={...sol,baseWidth:rr(r,.9,2),collectorArea:rr(r,.12,.4),vce:rr(r,10,18)};return {...scenarioBase(seed,r,diff,'gainpower'),title:'Усиление без перегрузки',summary:`β>${betaMin}, P<${pMax}W, J_C<${jMax}`,goal:`Получи β > ${betaMin}, удерживая P ниже ${pMax} W и J_C ниже ${jMax} A/mm².`,hint:'',topics:['усиление','тепловой режим','коллектор','база'],controls:[],init,solution:sol,check:(m,s)=>m.beta>betaMin&&m.power<pMax&&m.j<jMax&&!s.failed}}
+function familyCombinedBase(seed,r,diff='advanced'){const sol={...defaults,baseWidth:rr(r,.06,.18),emitterExp:rr(r,19,20),baseExp:rr(r,15.4,16.1),baseCurrentLog:rr(r,-.2,.5)},sm=calcMetrics(sol,validationState(sol)),gammaMin=roundTo(clamp(sm.gamma*100-.8,97,99.4),1),alphaMin=roundTo(clamp(sm.alphaT*100-1.2,96,99.1),1),betaMin=roundTo(clamp(sm.beta*.52,65,150),0),init={...sol,baseWidth:rr(r,1.1,2.6),emitterExp:rr(r,16.5,17.5),baseExp:rr(r,17,18)};return {...scenarioBase(seed,r,diff,'combo'),title:'Согласуй эмиттер и базу',summary:`γ>${gammaMin}%, α>${alphaMin}%, β>${betaMin}`,goal:`Одновременно добейся γ > ${gammaMin} %, α > ${alphaMin} % и β > ${betaMin}.`,hint:'',topics:['эмиттер','база','усиление','рекомбинация'],controls:[],init,solution:sol,check:(m,s)=>m.gamma*100>gammaMin&&m.alphaT*100>alphaMin&&m.beta>betaMin&&!s.failed}}
+function familyAvalanche(seed,r,diff='advanced'){let sol={...defaults,collectorExp:rr(r,17,18.2),collectorWidth:rr(r,.6,2.3),baseCurrentLog:rr(r,-1.8,-.4),vce:10};let sm=calcMetrics(sol,validationState(sol));const targetRatio=rr(r,.94,1.04);sol.vce=clamp(sm.vbr*targetRatio+sm.vbe,8,135);sm=calcMetrics(sol,validationState(sol));const lo=roundTo(Math.max(.9,sm.avalancheRatio-.025),2),hi=roundTo(Math.min(1.08,sm.avalancheRatio+.035),2),init={...sol,vce:Math.max(3,sol.vce*.35),collectorExp:Math.max(15.2,sol.collectorExp-.8)};return {...scenarioBase(seed,r,diff,'avalanche'),title:'Поймай начало лавины',summary:`V_CB/V_BR ${lo.toFixed(2)}–${hi.toFixed(2)}`,goal:`Выведи переход B–C в контролируемый лавинный диапазон ${lo.toFixed(2)}–${hi.toFixed(2)} по отношению V_CB/V_BR, не доводя модель до отказа.`,hint:'',topics:['электрическое поле','обеднённая область','пробой'],controls:[],init,solution:sol,check:(m,s)=>m.avalancheRatio>=lo&&m.avalancheRatio<=hi&&!s.failed}}
+function familyCurrentAndMargin(seed,r,diff='advanced'){const sol={...defaults,collectorArea:rr(r,1.2,3),collectorWidth:rr(r,5,10),collectorExp:rr(r,14.8,15.8),baseCurrentLog:rr(r,.1,.8),vce:rr(r,5,12)},sm=calcMetrics(sol,validationState(sol)),icMin=roundTo(sm.ic*.65,2),ratioMax=roundTo(clamp(sm.avalancheRatio+.12,.25,.6),2),jMax=roundTo(sm.j*1.5+.4,1),init={...sol,collectorArea:rr(r,.1,.3),collectorExp:rr(r,17.2,18.3),vce:rr(r,30,65)};return {...scenarioBase(seed,r,diff,'currentmargin'),title:'Ток с запасом по B–C',summary:`I_C>${icMin}A, J_C<${jMax}, поле<${(ratioMax*100).toFixed(0)}%`,goal:`Сохрани I_C выше ${icMin} A, J_C ниже ${jMax} A/mm² и V_CB/V_BR ниже ${(ratioMax*100).toFixed(0)} %.`,hint:'',topics:['коллектор','электрическое поле','тепловой режим'],controls:[],init,solution:sol,check:(m,s)=>m.ic>icMin&&m.j<jMax&&m.avalancheRatio<ratioMax&&!s.failed}}
+function familyDiagnoseHeat(seed,r,diff='engineering'){const sol={...defaults,collectorArea:rr(r,1.5,4),collectorWidth:rr(r,5,11),baseCurrentLog:rr(r,.45,1.2),vce:rr(r,3,7),ambient:rr(r,25,40)},th=estimatedThermal(sol),icMin=roundTo(th.m.ic*.65,2),jMax=roundTo(th.m.j*1.45+.35,1),pMax=roundTo(th.m.power*1.35+.1,2),init={...sol,collectorArea:rr(r,.08,.18),collectorWidth:rr(r,.4,1.2),vce:rr(r,11,20)};return {...scenarioBase(seed,r,diff,'diagheat'),title:'Диагностика перегрева',summary:`Скрытая причина · I_C≥${icMin}A`,goal:`Транзистор имеет признаки перегрева. Найди причину и исправь режим: I_C не ниже ${icMin} A, J_C ниже ${jMax} A/mm², P ниже ${pMax} W.`,hint:'',topics:['коллектор','тепловой режим'],controls:[],init,solution:sol,check:(m,s)=>m.ic>=icMin&&m.j<jMax&&m.power<pMax&&!s.failed}}
+function familyStable(seed,r,diff='engineering'){const sol={...defaults,baseWidth:rr(r,.08,.28),emitterExp:rr(r,18.8,19.8),baseExp:rr(r,15.5,16.5),collectorArea:rr(r,1.3,3.5),collectorWidth:rr(r,5,11),collectorExp:rr(r,14.8,15.8),baseCurrentLog:rr(r,-.1,.8),vce:rr(r,3,8)},sm=calcMetrics(sol,validationState(sol)),bLo=roundTo(Math.max(35,sm.beta*.55),0),bHi=roundTo(sm.beta*1.55+15,0),rMax=roundTo(clamp(sm.recombBase*100+2,3,8),1),gMin=roundTo(clamp(sm.gamma*100-1,96,99),1),jMax=roundTo(sm.j*1.55+.4,1),icLo=roundTo(sm.ic*.6,2),icHi=roundTo(sm.ic*1.5+.05,2),init={emitterWidth:rr(r,.4,1.4),baseWidth:rr(r,1.1,2.8),collectorWidth:rr(r,.5,2),collectorArea:rr(r,.1,.35),emitterExp:rr(r,16.3,17.5),baseExp:rr(r,17,18.2),collectorExp:rr(r,17,18.3),baseCurrentLog:rr(r,.2,1.2),vce:rr(r,8,18),ambient:sol.ambient};return {...scenarioBase(seed,r,diff,'stable'),title:'Устойчивый NPN',summary:`β ${bLo}–${bHi} + 5 ограничений`,goal:`Собери устойчивый NPN: β ${bLo}–${bHi}, рекомбинация < ${rMax} %, γ > ${gMin} %, J_C < ${jMax} A/mm² и I_C ${icLo}–${icHi} A.`,hint:'',topics:['эмиттер','база','коллектор','рекомбинация','усиление','тепловой режим'],controls:[],init,solution:sol,check:(m,s)=>m.beta>=bLo&&m.beta<=bHi&&m.recombBase*100<rMax&&m.gamma*100>gMin&&m.j<jMax&&m.ic>=icLo&&m.ic<=icHi&&!s.failed}}
+function familyDiagnoseBase(seed,r,diff='engineering'){const sol={...defaults,baseWidth:rr(r,.07,.22),emitterExp:rr(r,19,20),baseExp:rr(r,15.5,16.4),baseCurrentLog:rr(r,-.2,.7),collectorArea:rr(r,1.2,3)},sm=calcMetrics(sol,validationState(sol)),betaMin=roundTo(clamp(sm.beta*.55,60,170),0),recMax=roundTo(clamp(sm.recombBase*100+1.8,2.5,7),1),icMin=roundTo(sm.ic*.55,2),init={...sol,baseWidth:rr(r,2,4.5),emitterExp:rr(r,16,17.2),baseExp:rr(r,17.2,18.5)};return {...scenarioBase(seed,r,diff,'diagbase'),title:'Скрытые потери базы',summary:`Найти причину низкого β`,goal:`У транзистора низкое усиление и слабый коллекторный ток. Исправь скрытую причину: β > ${betaMin}, рекомбинация < ${recMax} %, I_C > ${icMin} A.`,hint:'',topics:['база','эмиттер','рекомбинация','усиление'],controls:[],init,solution:sol,check:(m,s)=>m.beta>betaMin&&m.recombBase*100<recMax&&m.ic>icMin&&!s.failed}}
+function familySafePower(seed,r,diff='engineering'){const sol={...defaults,collectorArea:rr(r,1.5,4),collectorWidth:rr(r,5,12),collectorExp:rr(r,14.7,15.7),baseCurrentLog:rr(r,.2,1),vce:rr(r,3,8)},sm=calcMetrics(sol,validationState(sol)),icMin=roundTo(sm.ic*.6,2),pMax=roundTo(sm.power*1.35+.08,2),ratioMax=roundTo(clamp(sm.avalancheRatio+.12,.28,.62),2),init={...sol,collectorExp:rr(r,17.4,18.5),collectorWidth:rr(r,.4,1.4),vce:rr(r,35,80)};return {...scenarioBase(seed,r,diff,'safepower'),title:'Мощность и пробивной запас',summary:`Сохрани ток без опасного поля`,goal:`Сохрани I_C > ${icMin} A, удерживая P < ${pMax} W и V_CB/V_BR < ${(ratioMax*100).toFixed(0)} %.`,hint:'',topics:['коллектор','электрическое поле','тепловой режим','пробой'],controls:[],init,solution:sol,check:(m,s)=>m.ic>icMin&&m.power<pMax&&m.avalancheRatio<ratioMax&&!s.failed}}
+const taskFamilies={basic:[familyRecomb,familyGamma,familyAlpha,familySafeField],medium:[familyBeta,familyCollectorJ,familyCurrentWindow,familyFieldMargin],advanced:[familyGainPower,familyCombinedBase,familyAvalanche,familyCurrentAndMargin],engineering:[familyDiagnoseHeat,familyStable,familyDiagnoseBase,familySafePower]};
+function generateTaskPair(diff,preferredTopic=null){app.taskGeneration++;let attempts=0,pair=[],signature='';const last=app.taskHistory[diff]?.at(-1)||'';while(attempts++<30){const seed=(Date.now()+app.taskGeneration*7919+attempts*104729+seedHash(diff))>>>0,r=mulberry32(seed),families=[...taskFamilies[diff]];families.sort(()=>r()-.5);if(preferredTopic){families.sort((a,b)=>String(a.name).includes(preferredTopic)?-1:0)}pair=[];for(let i=0;i<families.length&&pair.length<2;i++){let t=families[i](seed+i*173,r,diff);t.validated=validateGeneratedTask(t);if(t.validated)pair.push(t)}signature=pair.map(t=>t.id).join('|');if(pair.length===2&&signature!==last)break}if(pair.length<2)throw new Error('Task generator could not produce a validated pair');app.generatedTasks=pair;app.taskHistory[diff].push(signature);if(app.taskHistory[diff].length>12)app.taskHistory[diff].shift();return pair}
+function taskById(id){return app.generatedTasks.find(t=>t.id===id)}
+function renderTaskList(){const list=$("#taskList");if(app.generatedTasks.length!==2||app.generatedTasks.some(t=>t.difficulty!==app.currentDifficulty))generateTaskPair(app.currentDifficulty);list.innerHTML=app.generatedTasks.map(t=>`<button class="task-pick ${app.taskSolved.has(t.id)?'done':''}" data-task="${t.id}"><b>${app.taskSolved.has(t.id)?'✓ ':''}${t.title}</b><small>${t.summary}</small><span class="verified">✓ решаемость проверена · <span class="scenario-id">${t.scenario}</span></span></button>`).join('');list.querySelectorAll('[data-task]').forEach(b=>b.addEventListener('click',()=>startTask(b.dataset.task)));renderSkillMap();$("#taskScore").textContent=`${app.taskSolved.size} решено`}
+function clearTaskHighlights(){$$('.task-highlight').forEach(x=>x.classList.remove('task-highlight'))}
+function taskHighlights(t){clearTaskHighlights();if(t.difficulty!=='basic')return;for(const topic of t.controls)$$(`[data-control-topic="${topic}"]`).forEach(x=>x.classList.add('task-highlight'))}
+function startTask(id){const t=taskById(id);if(!t)return;app.activeTaskId=id;Object.assign(params,t.init);updateControls();resetRun();app.taskStart=snap();$("#taskActive").hidden=false;$("#taskTitle").textContent=t.title;$("#taskDifficulty").textContent=`${diffNames[t.difficulty]} · ${t.scenario}`;$("#taskGoal").innerHTML=taskGoalHTML(t.goal);$("#taskProgress").innerHTML=taskProgressHTML(t,state.lastMetrics||calcMetrics(params,state));$("#taskHint").textContent=t.hint;$("#taskConstraints").textContent=t.difficulty==='engineering'?'Подсказок нет. Условие уже проверено внутренним валидатором: допустимое решение существует.':'✓ Silicon Lab проверила достижимость условия до его показа.';$("#taskResult").className='task-result';$("#taskResult").innerHTML='';taskHighlights(t);centerCamera('all',true)}
+function taskReview(t,success){const m=state.lastMetrics||calcMetrics(params,state),start=app.taskStart,sm=start?start.metrics:null;const changes=[];if(start){for(const key of ['baseWidth','emitterExp','baseExp','collectorWidth','collectorArea','baseCurrentLog','vce']){const a=start.params[key],b=params[key];if(Math.abs(a-b)>1e-6)changes.push(`${paramName(key)}: ${formatParam(key,a)} → ${formatParam(key,b)}`)}}const effects=[];if(sm){if(m.recombBase<sm.recombBase)effects.push(`рекомбинация ↓ ${fmtPct(sm.recombBase)} → ${fmtPct(m.recombBase)}`);if(m.recombBase>sm.recombBase)effects.push(`рекомбинация ↑ ${fmtPct(sm.recombBase)} → ${fmtPct(m.recombBase)}`);if(m.beta>sm.beta)effects.push(`β ↑ ${sm.beta.toFixed(1)} → ${m.beta.toFixed(1)}`);if(m.beta<sm.beta)effects.push(`β ↓ ${sm.beta.toFixed(1)} → ${m.beta.toFixed(1)}`);if(m.gamma>sm.gamma)effects.push(`γ ↑ ${fmtPct(sm.gamma)} → ${fmtPct(m.gamma)}`);if(m.j<sm.j)effects.push(`J_C ↓ ${sm.j.toFixed(1)} → ${m.j.toFixed(1)} A/mm²`);if(m.power<sm.power)effects.push(`P ↓ ${sm.power.toFixed(2)} → ${m.power.toFixed(2)} W`)}const head=success?'Задание выполнено.':'Пока условие не выполнено.';return `<b>${head}</b>${changes.length?`<br><br>Что ты изменил:<br>• ${changes.join('<br>• ')}`:''}${effects.length?`<br><br>Физические последствия:<br>• ${effects.join('<br>• ')}`:''}<br><br>Сейчас: β ${m.beta.toFixed(1)}, рекомбинация ${fmtPct(m.recombBase)}, γ ${fmtPct(m.gamma)}, I_C ${fmtCurrent(m.ic)}, J_C ${m.j.toFixed(2)} A/mm², P ${m.power.toFixed(2)} W, T_C ${fmtTemp(state.tempC)}.`}
+function paramName(k){return ({baseWidth:'толщина базы',emitterExp:'легирование эмиттера',baseExp:'легирование базы',collectorWidth:'толщина коллектора',collectorArea:'площадь коллектора',baseCurrentLog:'I_B',vce:'V_CE'})[k]||k}
+function formatParam(k,v){if(k.endsWith('Exp'))return `10^${v.toFixed(2)}`;if(k==='baseCurrentLog')return `${Math.pow(10,v).toFixed(2)} mA`;if(k==='vce')return `${v.toFixed(1)} V`;if(k==='collectorArea')return `${v.toFixed(2)} mm²`;return `${v.toFixed(2)} µm`}
+function awardSkills(t){for(const topic of t.topics)app.skills[topic]=clamp(app.skills[topic]+(t.difficulty==='basic'?18:t.difficulty==='medium'?24:t.difficulty==='advanced'?31:38),0,100)}
+$("#checkTaskBtn").addEventListener('click',()=>{const t=taskById(app.activeTaskId);if(!t)return;const m=state.lastMetrics||calcMetrics(params,state),ok=t.check(m,state,params);const r=$("#taskResult");r.className='task-result '+(ok?'success':'fail');r.innerHTML=taskReview(t,ok);if(ok&&!app.taskSolved.has(t.id)){app.taskSolved.add(t.id);awardSkills(t);renderSkillMap();renderTaskList()}});$("#restartTaskBtn").addEventListener('click',()=>{if(app.activeTaskId)startTask(app.activeTaskId)});$$('.difficulty').forEach(b=>b.addEventListener('click',()=>{app.currentDifficulty=b.dataset.difficulty;$$('.difficulty').forEach(x=>x.classList.toggle('active',x===b));generateTaskPair(app.currentDifficulty);renderTaskList();$("#taskActive").hidden=true;app.activeTaskId=null;clearTaskHighlights()}));
+$("#taskActive").addEventListener('click',e=>{const b=e.target.closest('[data-task-symbol]');if(!b)return;const key=b.dataset.taskSymbol,d=taskSymbolInfo[key];if(d)openSheet('ОБОЗНАЧЕНИЕ В ЗАДАНИИ',d.title,symbolSheetBody(key))});
+function renderSkillMap(){const el=$("#skillMap");el.innerHTML=Object.entries(app.skills).map(([k,v])=>`<div class="skill-row"><span>${k}</span><div class="skill-track"><div class="skill-fill" style="width:${v}%"></div></div><em>${Math.round(v)}%</em></div>`).join('')}
+
+// v0.6 contextual metric cards + formulas + global element help
+const metricHelp={
+ ib:{title:'I_B — ток базы',symbol:'I_B',unit:'A / mA / µA',meaning:'Управляющий ток, связанный с процессами в переходе база–эмиттер. В схемной модели BJT он коррелирует с коллекторным током, но глубокая физическая причина — инжекция через E–B.',affects:'Режим транзистора, коллекторный ток и нагрев перехода E–B.',depends:'Внешний источник/резистор базы, V_BE, температура и параметры структуры.',current:(m,s)=>fmtCurrent(m.ib),interpret:(m,s)=>m.ib<1e-8?'Почти нет управления: транзистор близок к отсечке.':m.ib>m.safeBaseA?'Ток базы выше условно безопасного уровня этой модели.':'Ток базы находится в рабочем диапазоне модели.'},
+ ic:{title:'I_C — ток коллектора',symbol:'I_C',unit:'A',meaning:'Основной ток, который проходит через коллекторную цепь благодаря электронам, инжектированным эмиттером и прошедшим базу.',affects:'Нагрузку, рассеиваемую мощность, плотность тока и температуру.',depends:'I_B/V_BE, γ, α, β, V_CE и внешняя нагрузка.',current:(m,s)=>fmtCurrent(m.ic),interpret:(m,s)=>`При площади ${params.collectorArea.toFixed(2)} mm² это даёт J_C = ${m.j.toFixed(2)} A/mm².`},
+ beta:{title:'β — эффективный коэффициент усиления по току',symbol:'β',unit:'безразмерный',meaning:'Отношение I_C к I_B в используемой схемной модели. Это не постоянная природы и не одинаковое число для всех режимов.',affects:'Сколько базового тока требуется для заданного коллекторного тока.',depends:'Эмиттерная эффективность γ, перенос через базу α, температура и режим B–C.',current:(m,s)=>m.beta.toFixed(1),interpret:(m,s)=>m.beta>100?'Высокое усиление в текущем режиме.':m.beta>30?'Рабочее умеренное усиление.':'Низкое усиление: проверь базу, эмиттер и режим переходов.'},
+ recomb:{title:'Рекомбинация в базе',symbol:'R_base',unit:'%',meaning:'Доля инжектированных электронов, которые теряются в базе, рекомбинируя с дырками до достижения области B–C.',affects:'Коэффициент переноса α, β и I_C.',depends:'Толщина базы, легирование, температура и условная длина диффузии/время жизни носителей.',current:(m,s)=>fmtPct(m.recombBase),interpret:(m,s)=>m.recombBase<.05?'Потери малы: большинство электронов проходит базу.':m.recombBase<.25?'Потери заметны.':'Большая часть носителей теряется в базе.'},
+ tb:{title:'T базы — температура базовой области',symbol:'T_B',unit:'°C',meaning:'Локальная температура области базы/E–B в тепловой модели.',affects:'Перенос носителей, V_BE, деградацию и риск отказа.',depends:'Мощность на E–B, рекомбинация, ток базы, связь с коллектором и температура среды.',current:(m,s)=>fmtTemp(s.tempB),interpret:(m,s)=>s.tempB<100?'Температура умеренная.':s.tempB<200?'База заметно нагрета.':'Опасный тепловой режим.'},
+ tc:{title:'T коллектора — температура hotspot',symbol:'T_C',unit:'°C',meaning:'Локальная температура наиболее нагруженной части коллекторной области.',affects:'Надёжность, ток утечки и риск теплового разрушения.',depends:'P = V_CE·I_C, площадь/толщина коллектора, J_C и температура среды.',current:(m,s)=>fmtTemp(s.tempC),interpret:(m,s)=>s.tempC<100?'Коллектор относительно холодный.':s.tempC<200?'Нагрев уже существенный.':'Высокий риск накопления теплового damage.'},
+ vbe:{title:'V_BE — напряжение база–эмиттер',symbol:'V_BE',unit:'V',meaning:'Напряжение на переходе E–B. В активном режиме прямое смещение снижает барьер и резко усиливает инжекцию носителей.',affects:'Инжекцию и ток базы.',depends:'Ток базы, температура и свойства перехода.',current:(m,s)=>m.vbe.toFixed(3)+' V',interpret:(m,s)=>m.vbe<.45?'Инжекция слабая.':'E–B прямосмещён и активно участвует в инжекции.'},
+ vcb:{title:'V_CB — напряжение коллектор–база',symbol:'V_CB',unit:'V',meaning:'Разность потенциалов между коллектором и базой. В активном NPN переход B–C обычно обратносмещён.',affects:'Ширину обеднённой области, напряжённость поля B–C и приближение к лавинному пробою.',depends:'V_CE и V_BE; в принятой системе потенциалов V_CB = V_CE − V_BE.',current:(m,s)=>m.vcb.toFixed(3)+' V',interpret:(m,s)=>`Это ${(m.avalancheRatio*100).toFixed(1)} % от текущей оценки V_BR.`},
+ margin:{title:'V_CB / V_BR — доля пробивного запаса',symbol:'V_CB/V_BR',unit:'%',meaning:'Отношение текущего обратного напряжения B–C к учебной оценке напряжения пробоя.',affects:'Наглядный запас до лавинного режима. Чем меньше процент, тем дальше текущий режим от оценки пробоя.',depends:'Одновременно от V_CB и от конструкции коллектора, которая задаёт V_BR.',current:(m,s)=>(m.avalancheRatio*100).toFixed(1)+' %',interpret:(m,s)=>m.avalancheRatio<.35?'Большой запас по B–C.':m.avalancheRatio<.8?'Запас уменьшается.':'Переход близок к лавинному режиму.'},
+ vbr:{title:'V_BR — оценка напряжения пробоя B–C',symbol:'V_BR',unit:'V',meaning:'Учебная оценка того, какое обратное напряжение может выдержать переход база–коллектор до лавинного режима.',affects:'Запас безопасной работы по напряжению.',depends:'Легирование и толщина коллекторной области.',current:(m,s)=>m.vbr.toFixed(1)+' V',interpret:(m,s)=>`Сейчас V_CB = ${m.vcb.toFixed(2)} V (${(100*m.avalancheRatio).toFixed(0)} % от оценки V_BR).`},
+ jc:{title:'J_C — плотность тока коллектора',symbol:'J_C',unit:'A/mm²',meaning:'Коллекторный ток, отнесённый к площади коллектора. Показывает, насколько концентрирован поток носителей.',affects:'Локальный нагрев и вероятность hotspot.',depends:'I_C и площадь коллектора.',current:(m,s)=>m.j.toFixed(2)+' A/mm²',interpret:(m,s)=>m.j<3?'Плотность небольшая.':m.j<8?'Плотность заметная.':'Высокая плотность тока — следи за hotspot.'},
+ power:{title:'P — рассеиваемая мощность',symbol:'P',unit:'W',meaning:'Мощность, превращающаяся главным образом в тепло внутри модели транзистора.',affects:'Температуру базы/коллектора и накопление повреждения.',depends:'Прежде всего V_CE·I_C плюс вклад перехода E–B.',current:(m,s)=>m.power<1?(m.power*1000).toFixed(1)+' mW':m.power.toFixed(2)+' W',interpret:(m,s)=>`При текущем режиме основная часть связана с коллекторной цепью: ${(m.pCollector*1000).toFixed(1)} mW.`},
+ gamma:{title:'γ emitter — эффективность эмиттерной инжекции',symbol:'γ',unit:'%',meaning:'Показывает, какая доля инжекции через E–B приходится на желаемый поток электронов из N-эмиттера в P-базу.',affects:'Эффективность BJT, α_F, β и долю встречной инжекции дырок.',depends:'Относительное легирование эмиттера и базы, а также структура перехода E–B.',current:(m,s)=>fmtPct(m.gamma),interpret:(m,s)=>m.gamma>.98?'Очень эффективная эмиттерная инжекция.':m.gamma>.9?'Есть заметная встречная инжекция дырок.':'Эмиттер работает неэффективно для нормального NPN.'},
+ alpha:{title:'α base — коэффициент переноса через базу',symbol:'α',unit:'%',meaning:'Показывает, какая доля электронов, вошедших в базу, проходит её без рекомбинации.',affects:'Коллекторный ток и β.',depends:'Толщина базы, рекомбинация, условная длина диффузии, легирование и температура.',current:(m,s)=>fmtPct(m.alphaT),interpret:(m,s)=>m.alphaT>.98?'Почти весь поток проходит базу.':m.alphaT>.85?'Потери в базе уже заметны.':'База сильно теряет носители.'}
+};
+
+const formulaCatalog={
+ ib:{general:'I_E = I_C + I_B',subst:(m)=>`${fmtCurrent(m.ic+m.ib)} = ${fmtCurrent(m.ic)} + ${fmtCurrent(m.ib)}`,note:'Закон токов для выводов BJT. Он не утверждает, что энергия коллекторного тока приходит из базы.'},
+ ic:{general:'I_C ≈ β · I_B  (активный схемный режим)',subst:(m)=>`${fmtCurrent(m.ic)} ≈ ${m.beta.toFixed(1)} × ${fmtCurrent(m.ib)}`,note:'Это удобная схемная связь. В Physics Core I_C возникает из инжекции, переноса через базу и сбора B–C.'},
+ beta:{general:'β = I_C / I_B',subst:(m)=>`${m.beta.toFixed(1)} ≈ ${fmtCurrent(m.ic)} / ${fmtCurrent(m.ib)}`,note:'β меняется с режимом, температурой и структурой; это не универсальная постоянная.'},
+ recomb:{general:'R_base = 1 − α_T',model:'α_T = exp(−W_B / L_n)',subst:(m)=>`${fmtPct(m.recombBase)} = 1 − ${fmtPct(m.alphaT)}`,note:'Вторая формула — упрощённая модель Silicon Lab для транспорта через базу.'},
+ tb:{general:'ΔT ≈ P · R_θ',subst:(m)=>`P = ${m.power.toFixed(3)} W`,note:'Инженерная тепловая оценка. В Silicon Lab база и коллектор имеют раздельные динамические тепловые узлы.'},
+ tc:{general:'ΔT ≈ P · R_θ',subst:(m)=>`P = ${m.power.toFixed(3)} W`,note:'Инженерная тепловая оценка; реальная температура зависит от корпуса, монтажа и теплоотвода.'},
+ vbe:{general:'I ≈ I_S · (e^(V_BE/(nV_T)) − 1)',model:'V_BE = 0.44 + 0.074·log10(1 + I_B/1µA) − 0.0017·(T_B−25)',subst:(m)=>`V_BE = ${m.vbe.toFixed(3)} V при I_B = ${fmtCurrent(m.ib)}`,note:'Первая запись показывает общую диодную экспоненциальную связь. Вторая — явно упрощённая аппроксимация Silicon Lab.'},
+ vcb:{general:'V_CB = V_CE − V_BE',subst:(m)=>`${m.vcb.toFixed(3)} V = ${params.vce.toFixed(3)} V − ${m.vbe.toFixed(3)} V`,note:'Знак зависит от выбранного определения потенциалов; Silicon Lab использует указанную систему.'},
+ vbr:{model:'V_BR ≈ f(N_C, W_C)  — модель Silicon Lab',subst:(m)=>`V_BR ≈ ${m.vbr.toFixed(1)} V`,note:'Здесь используется учебная аппроксимация: более слабое легирование и большая толщина коллектора повышают оценку пробивного напряжения. Это не TCAD-формула реального прибора.'},
+ margin:{general:'Запас = (V_CB / V_BR) · 100%',subst:(m)=>`${(m.avalancheRatio*100).toFixed(1)}% = (${m.vcb.toFixed(2)} / ${m.vbr.toFixed(2)}) · 100%`,note:'Именно эту величину используют задания на запас B–C.'},
+ jc:{general:'J_C = I_C / A_C',subst:(m)=>`${m.j.toFixed(3)} A/mm² = ${fmtCurrent(m.ic)} / ${params.collectorArea.toFixed(2)} mm²`,note:'Плотность тока помогает увидеть локальную нагрузку, которую один I_C не показывает.'},
+ power:{general:'P ≈ V_CE·I_C + V_BE·I_B',subst:(m)=>`${m.power.toFixed(3)} W ≈ ${params.vce.toFixed(2)}·${m.ic.toFixed(4)} + ${m.vbe.toFixed(3)}·${m.ib.toFixed(5)}`,note:'Эта мощность в модели превращается главным образом в тепло.'},
+ gamma:{model:'γ = 1 / [1 + 0.85·(N_B/N_E)·√(W_B/0.12)]',subst:(m)=>`γ = ${(m.gamma*100).toFixed(2)}%`,note:'Это упрощённая зависимость Silicon Lab, сохраняющая физически правильную тенденцию эмиттерной эффективности.'},
+ alpha:{model:'α_T = exp(−W_B / L_n)',subst:(m)=>`α_T = ${(m.alphaT*100).toFixed(2)}% при W_B = ${params.baseWidth.toFixed(2)} µm`,note:'Упрощённая transport-модель Silicon Lab; L_n зависит от легирования и температуры.'}
+};
+function formulaHTML(key,m=state.lastMetrics||calcMetrics(params,state),open=visual.formulaAuto){const f=formulaCatalog[key];if(!f)return '';return `<details class="formula-box" ${open?'open':''}><summary>Формула и текущая подстановка</summary><div class="formula-content">${f.general?`<div class="formula-main">${f.general}</div>`:''}${f.model?`<div class="formula-main formula-model">Упрощённая модель Silicon Lab: ${f.model}</div>`:''}${f.subst?`<div class="formula-subst">${f.subst(m)}</div>`:''}<div class="formula-note">${f.note||''}</div></div></details>`}
+const taskSymbolInfo={
+ V_CB:{title:'V_CB — напряжение коллектор–база',metric:'vcb'},V_BR:{title:'V_BR — оценка пробоя B–C',metric:'vbr'},V_BE:{title:'V_BE — напряжение база–эмиттер',metric:'vbe'},V_CE:{title:'V_CE — напряжение коллектор–эмиттер',body:(m)=>`<p>Внешнее напряжение между коллектором и эмиттером. Сейчас V_CE = <b>${params.vce.toFixed(2)} V</b>.</p>${formulaHTML('vcb',m)}`},I_C:{title:'I_C — ток коллектора',metric:'ic'},I_B:{title:'I_B — ток базы',metric:'ib'},J_C:{title:'J_C — плотность тока',metric:'jc'},β:{title:'β — усиление по току',metric:'beta'},γ:{title:'γ — эмиттерная эффективность',metric:'gamma'},α:{title:'α — перенос через базу',metric:'alpha'},P:{title:'P — мощность',metric:'power'},T_C:{title:'T_C — температура коллектора',metric:'tc'}
+};
+function symbolSheetBody(key){const d=taskSymbolInfo[key],m=state.lastMetrics||calcMetrics(params,state);if(!d)return '<p>Нет описания.</p>';if(d.metric)return metricBody(d.metric);return d.body?d.body(m):'<p>Нет описания.</p>'}
+function taskGoalHTML(text){let out=String(text);const reps=[['V_CB','V<sub>CB</sub>'],['V_BR','V<sub>BR</sub>'],['V_BE','V<sub>BE</sub>'],['V_CE','V<sub>CE</sub>'],['I_C','I<sub>C</sub>'],['I_B','I<sub>B</sub>'],['J_C','J<sub>C</sub>'],['T_C','T<sub>C</sub>'],['β','β'],['γ','γ'],['α','α']];for(const [raw,label] of reps){out=out.split(raw).join(`<button class="task-symbol" type="button" data-task-symbol="${raw}">${label}</button>`)}return out}
+function taskProgressHTML(t,m){const g=t?.goal||'',chips=[];const add=(label,val,target=false)=>chips.push(`<span class="task-progress-chip${target?' target':''}"><b>${label}</b> ${val}</span>`);if(g.includes('V_CB')||g.includes('V_BR')){add('V_CB',m.vcb.toFixed(2)+' V');add('V_BR',m.vbr.toFixed(1)+' V');add('V_CB/V_BR',(m.avalancheRatio*100).toFixed(1)+' %',true)}if(g.includes('β'))add('β',m.beta.toFixed(1));if(g.includes('γ'))add('γ',fmtPct(m.gamma));if(g.includes('α'))add('α',fmtPct(m.alphaT));if(g.includes('I_C'))add('I_C',fmtCurrent(m.ic));if(g.includes('I_B'))add('I_B',fmtCurrent(m.ib));if(g.includes('J_C'))add('J_C',m.j.toFixed(2)+' A/mm²');if(/\bP\b/.test(g))add('P',m.power.toFixed(2)+' W');if(g.includes('T_C')||g.includes('температур'))add('T_C',fmtTemp(state.tempC));return chips.join('')}
+function openSheet(kicker,title,body){$("#sheetKicker").textContent=kicker;$("#sheetTitle").innerHTML=title;$("#sheetBody").innerHTML=body;$("#sheetBackdrop").hidden=false;$("#infoSheet").hidden=false;document.body.classList.add('sheet-open')}
+function closeSheet(){$("#sheetBackdrop").hidden=true;$("#infoSheet").hidden=true;document.body.classList.remove('sheet-open')}
+$("#closeSheet").addEventListener('click',closeSheet);$("#sheetBackdrop").addEventListener('click',closeSheet);window.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+function metricBody(key){const h=metricHelp[key],m=state.lastMetrics||calcMetrics(params,state),s=state;return `<div class="current-box"><b>Сейчас:</b> ${h.current(m,s)}<br>${h.interpret(m,s)}</div><h3>Что это значит</h3><p>${h.meaning}</p><h3>На что влияет</h3><p>${h.affects}</p><h3>От чего зависит</h3><p>${h.depends}</p><h3>Обозначение</h3><p><b>${h.symbol}</b> · единицы: ${h.unit}</p>${formulaHTML(key,m)}`}
+$$('.metric').forEach(tile=>tile.addEventListener('click',()=>{const key=tile.dataset.metric,h=metricHelp[key];if(h)openSheet('ПАРАМЕТР',h.title,metricBody(key))}));
+function helpHTML(){return `<div class="help-nav"><button data-help-jump="what">Что это</button><button data-help-jump="purpose">Зачем нужен</button><button data-help-jump="examples">Примеры</button><button data-help-jump="pins">E / B / C</button><button data-help-jump="modes">Режимы</button><button data-help-jump="params">Параметры</button><button data-help-jump="danger">Опасные режимы</button></div><section id="help-what"><h3>Что такое NPN-транзистор</h3><p>NPN — биполярный транзистор из трёх областей N–P–N. Он позволяет небольшим управляющим воздействием в цепи базы управлять значительно большим током коллекторной цепи.</p><p class="help-note">В Silicon Lab ты можешь одновременно видеть схемные величины и процессы внутри кристалла, которые к ним приводят.</p></section><section id="help-purpose">
+<h3>Зачем нужен транзистор и что он делает</h3>
+<p>Транзистор помогает <b>управлять электрическим током</b>. Его можно использовать как электронный выключатель — включать и выключать нагрузку — или как усилитель слабого сигнала.</p>
+<p class="help-highlight"><b>Простыми словами:</b> небольшой сигнал на базе меняет условия для гораздо большего тока через коллекторную цепь. Сам транзистор энергию не создаёт: её даёт источник питания.</p>
+<div class="definition-grid"><div class="definition-card"><b>Роль № 1 · переключатель</b>Малый управляющий сигнал позволяет включить светодиод, реле или другую подходящую низковольтную нагрузку.</div><div class="definition-card"><b>Роль № 2 · усилитель</b>Маленькие изменения входного сигнала могут вызвать большие изменения выходного сигнала. Так обрабатывают звук и сигналы датчиков.</div></div>
+<h3>Где его можно встретить</h3><p>В электронных устройствах — от простых сигнализаторов и световых индикаторов до усилителей звука и управляющих схем. В цифровых микросхемах часто используются другие виды транзисторов, прежде всего MOSFET; здесь мы изучаем именно биполярный NPN.</p>
+</section>
+<section id="help-examples">
+<h3>Понятные примеры из жизни</h3>
+<div class="help-example"><strong>Пример 1. Датчик включил светодиод</strong><div class="help-flow"><span>Датчик</span><i>→</i><span>База NPN</span><i>→</i><span>Ток через светодиод</span></div><p>Допустим, датчик обнаружил темноту и выдаёт управляющий сигнал. NPN может включить светодиод в отдельной цепи питания. Для настоящей схемы нужны резисторы, ограничивающие ток через светодиод и базу. Без сигнала транзистор закрыт, с подходящим сигналом — открыт.</p></div>
+<div class="help-example"><strong>Пример 2. Усилить слабый звук</strong><div class="help-flow"><span>Слабый аудиосигнал</span><i>→</i><span>NPN в усилителе</span><i>→</i><span>Большие изменения выходного сигнала</span></div><p>Микрофон создаёт небольшие электрические колебания. Правильно включённый транзистор позволяет превратить их в более заметные изменения тока или напряжения. Усиление зависит от схемы, питания и рабочей точки; один транзистор сам по себе не является готовым усилителем.</p></div>
+<h3>Что попробовать в Silicon Lab</h3><p>Открой «Эксперименты» и меняй ток базы I<sub>B</sub>: наблюдай изменение I<sub>C</sub>, β и температуры. Затем увеличь толщину базы и посмотри, почему ток коллектора падает. Так видно, <b>почему транзистор управляет током</b>, а не только то, что он его меняет.</p>
+<p class="help-muted">Наша лаборатория показывает внутреннюю физику. Когда появится редактор схем, эти примеры можно будет собирать и проверять целиком.</p>
+</section><section id="help-pins"><h3>Выводы</h3><div class="definition-grid"><div class="definition-card"><b>E — эмиттер</b>Сильно легированная N-область. Инжектирует электроны.</div><div class="definition-card"><b>B — база</b>Тонкая P-область. Через B-contact в неё визуально поступает поток дырок, связанный с базовым током.</div><div class="definition-card"><b>C — коллектор</b>Собирает прошедшие базу электроны и выдерживает обратное напряжение B–C.</div><div class="definition-card"><b>Структура N–P–N</b>Два взаимодействующих p–n-перехода; это не две независимые диоды.</div></div></section><section id="help-modes"><h3>Основные режимы</h3><ul><li><b>Отсечка:</b> инжекция почти отсутствует.</li><li><b>Активный:</b> E–B прямосмещён, B–C обратносмещён; транзистор может усиливать.</li><li><b>Насыщение:</b> B–C перестаёт быть нормальным обратносмещённым собирающим переходом.</li><li><b>Пробой:</b> поле B–C становится слишком сильным и начинается лавинный режим.</li></ul></section><section id="help-params"><h3>Ключевые параметры</h3><p>I_B — ток базы · I_C — ток коллектора · β — эффективное усиление · γ — эффективность эмиттерной инжекции · α — перенос через базу · V_BE — напряжение E–B · V_BR — оценка пробоя · J_C — плотность тока · P — мощность.</p><p>Нажми на любую плитку измерений — откроется подробное контекстное описание.</p></section><section id="help-danger"><h3>Что может пойти не так</h3><ul><li>Слишком толстая база → рекомбинация ↑ → α и β ↓.</li><li>Малый коллектор + большой I_C → J_C ↑ → локальный hotspot.</li><li>Большой I_B → перегрев E–B.</li><li>Большое обратное напряжение B–C → лавинный пробой.</li><li>Большие I_C и V_CE одновременно → P ↑ → сильный нагрев.</li></ul></section><button class="btn physics-toggle" data-help-deep>Подробнее о физике</button><section id="help-deep" class="deep-physics" hidden><h3>Глубже: почему NPN вообще работает</h3><p><b>E–B и инжекция.</b> Прямое смещение уменьшает потенциальный барьер. Сильно легированный эмиттер создаёт преимущественный поток электронов в P-базу; γ показывает качество этой асимметрии.</p><p><b>База и диффузия.</b> В ней нет поля, которое просто «тащит» весь поток к коллектору. Основной перенос через нейтральную базу связан с градиентом концентрации. Чем база тоньше и меньше рекомбинация, тем ближе α к 1.</p><p><b>Обеднённая область B–C.</b> Здесь мало подвижных носителей, но остаются фиксированные ионы. Их пространственный заряд создаёт электрическое поле. Дошедший до этой области электрон быстро собирается коллектором.</p><p><b>Связь γ, α и β.</b> γ описывает качество эмиттерной инжекции, α — выживание электронов при прохождении базы. Вместе они определяют α_F, а схемное β резко растёт, когда α_F приближается к единице.</p><p><b>Базовый ток.</b> В визуализации v0.6 через B-contact в P-базу входит поток дырок. Он не является источником основных электронов коллектора: электроны приходят из эмиттера. Базовая цепь поддерживает состояние базы, в том числе пополняя носители, расходуемые рекомбинацией.</p><p><b>Пробой и тепло.</b> Слишком сильное поле B–C запускает лавинное умножение. Одновременно большая величина V_CE·I_C превращает электрическую мощность в тепло. Поэтому безопасная работа — всегда компромисс между током, напряжением, геометрией и температурой.</p><h3>Базовые формулы лаборатории</h3><p>Математический слой связывает визуализацию с измерениями. Для каждой формулы Silicon Lab отдельно указывает, является ли она общей схемной/физической зависимостью или упрощённой моделью симулятора.</p><div class="formula-main">I_E = I_C + I_B</div><div class="formula-main">β = I_C / I_B</div><div class="formula-main">V_CB = V_CE − V_BE</div><div class="formula-main">J_C = I_C / A_C</div><div class="formula-main">P ≈ V_CE·I_C + V_BE·I_B</div><div class="formula-main">Запас B–C = (V_CB / V_BR) · 100%</div></section><div class="sheet-actions"><button class="btn" data-help-action="base">Показать базу</button><button class="btn" data-help-action="bc">Показать B–C</button><button class="btn" data-help-action="thick">Эксперимент: толстая база</button><button class="btn" data-help-action="task">Задание по базе</button></div>`}
+$("#helpBtn").addEventListener('click',()=>openSheet('СПРАВКА · ЭЛЕМЕНТ','NPN-транзистор',helpHTML()));
+$("#sheetBody").addEventListener('click',e=>{
+ const deep=e.target.closest('[data-help-deep]');if(deep){const sec=$("#help-deep"),show=sec.hidden;sec.hidden=!show;deep.textContent=show?'Скрыть подробную физику':'Подробнее о физике';if(show)sec.scrollIntoView({behavior:'smooth',block:'nearest'});return}
+ const evFocus=e.target.closest('[data-event-focus]');if(evFocus){const z=evFocus.dataset.eventFocus;closeSheet();focusCauseZone(z);return}
+ const jump=e.target.closest('[data-help-jump]');if(jump){$("#help-"+jump.dataset.helpJump)?.scrollIntoView({behavior:'smooth',block:'start'});return}
+ const a=e.target.closest('[data-help-action]');if(!a)return;const act=a.dataset.helpAction;closeSheet();
+ if(act==='base'){setMode('explain');focusCauseZone('base')}
+ if(act==='bc'){setMode('explain');centerCamera('bc',true);camera.targetZoom=8;clampCamera()}
+ if(act==='thick'){setMode('experiment');applyPreset('thick')}
+ if(act==='task'){setMode('tasks');app.currentDifficulty='basic';$$('.difficulty').forEach(x=>x.classList.toggle('active',x.dataset.difficulty==='basic'));generateTaskPair('basic');renderTaskList();const t=app.generatedTasks.find(x=>x.topics.includes('база'))||app.generatedTasks[0];if(t)startTask(t.id)}
+});
+
+
+function syncDesktopPanels(){const side=$('.side-card'),stage=$('.stage-card');if(!side||!stage)return;if(matchMedia('(min-width:1200px)').matches){side.style.height=Math.round(stage.getBoundingClientRect().height)+'px'}else side.style.height=''}
+let syncTimer=0;window.addEventListener('resize',()=>{clearTimeout(syncTimer);syncTimer=setTimeout(syncDesktopPanels,80)});
+function loop(now){const realDt=Math.min(.05,(now-lastNow)/1000);lastNow=now;if(activeDevice==='diode'){diodeFrame(realDt);requestAnimationFrame(loop);return;}if(running){let remain=realDt*simSpeed;while(remain>0){const dt=Math.min(.025,remain);stepPhysics(dt);remain-=dt}recordAccum+=realDt*simSpeed;while(recordAccum>=RECORD_STEP){record();recordAccum-=RECORD_STEP}}cameraStep();render(currentView());updateUI();requestAnimationFrame(loop)}
+if(!ctx.roundRect){CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){r=Math.min(r,w/2,h/2);this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);return this}}
+
+// Silicon Lab v0.7.1: diode is a device in the SAME stage/viewport/metrics/timeline/sheets, not a frame/page.
+let activeDevice='npn';
+const diodeDefaults={source:5,resistance:100,naExp:16,ndExp:16,area:1,ambient:25};
+const dParams={...diodeDefaults};
+const dState={t:0,temp:25,damage:0,failed:false,failReason:'',m:null};
+let dRunning=true,dSpeed=1,dHistory=[],dHistoryIndex=-1,dAccumulator=0,dSelectedTask=-1;
+let savedNpnCamera=null,savedDiodeCamera=null,savedNpnSelection=null,diodeSelection=null;
+const DQ=1.602176634e-19,DEPS=11.7*8.8541878e-14,DK=1.380649e-23;
+const dPresets={forward:{...diodeDefaults,source:5},reverse:{...diodeDefaults,source:-20},avalanche:{...diodeDefaults,source:-105,resistance:70},thin:{...diodeDefaults,source:-15,naExp:14.2,ndExp:14.5}};
+function diodeCalc(p,st){
+ const T=273.15+st.temp,Vt=DK*T/DQ,Na=10**p.naExp,Nd=10**p.ndExp;
+ const vbi=clamp(Vt*Math.log(Na*Nd/1e20),.15,1.4),ideality=1.5;
+ const Is=3e-10*p.area*2**((st.temp-25)/12)*10**((16-p.naExp)*.07+(16-p.ndExp)*.07);
+ const vbr=clamp(9+48*(1e16/Math.min(Na,Nd))**.26,7,220);
+ function iAt(v){let i=Is*Math.expm1(clamp(v/(ideality*Vt),-40,40));if(v<-vbr){const dx=-v-vbr;i-=.0002*p.area*(dx/3)**2}return i}
+ // Solve U_source = U_diode + I_diode*R. The resistor protects the model from ideal-source unbounded current.
+ const f=v=>v+iAt(v)*p.resistance-p.source;
+ let lo=Math.min(-300,p.source-2),hi=Math.max(5,p.source+2);
+ for(let i=0;i<110;i++){let mid=(lo+hi)/2;if(f(mid)>0)hi=mid;else lo=mid}
+ const vd=st.failed?p.source:(lo+hi)/2,I=st.failed?0:iAt(vd);
+ const W=Math.sqrt(2*DEPS/DQ*(1/Na+1/Nd)*Math.max(.02,vbi-vd))*1e4;
+ const Wp=W*Nd/(Na+Nd),Wn=W*Na/(Na+Nd),E=DQ*Na*(Wp*1e-4)/DEPS;
+ const power=Math.abs(vd*I),rPower=I*I*p.resistance;
+ return {vd,I,W,Wp,Wn,E,vbi,vbr,power,rPower,reverse:vd<-.05,breakdown:vd<=-vbr,Vt,Is,Na,Nd,ideality,temp:st.temp,damaged:st.failed};
+}
+function diodeReset(){Object.assign(dState,{t:0,temp:dParams.ambient,damage:0,failed:false,failReason:'',m:null});dState.m=diodeCalc(dParams,dState);dHistory=[];dHistoryIndex=-1;dAccumulator=0;diodeRecord();diodeControlsUpdate();}
+function diodeAdvance(dt){if(!dState.failed){const m=diodeCalc(dParams,dState),rth=clamp(130/Math.sqrt(dParams.area),26,420),target=dParams.ambient+m.power*rth;
+ dState.temp+=(target-dState.temp)*(1-Math.exp(-dt/2.4));
+ const hot=Math.max(0,dState.temp-170)/65,aval=m.breakdown?Math.max(0,-m.vd/m.vbr-1):0;
+ dState.damage=clamp(dState.damage+dt*(hot*.55+aval*.15)-dt*.015,0,2);
+ if(dState.temp>290||dState.damage>=1){dState.failed=true;dState.failReason=m.breakdown?'Лавинная перегрузка и тепловое повреждение':'Тепловое повреждение перехода';}
+ }else dState.temp+=(dParams.ambient-dState.temp)*(1-Math.exp(-dt/3));
+ dState.t+=dt;dState.m=diodeCalc(dParams,dState);
+}
+function diodeRecord(){dHistory.push({t:dState.t,temp:dState.temp,damage:dState.damage,failed:dState.failed,failReason:dState.failReason,params:{...dParams},m:{...dState.m}});if(dHistory.length>1500)dHistory.shift();dHistoryIndex=dHistory.length-1}
+function diodeView(){return !dRunning&&dHistory[dHistoryIndex]?dHistory[dHistoryIndex]:{t:dState.t,temp:dState.temp,damage:dState.damage,failed:dState.failed,failReason:dState.failReason,params:dParams,m:dState.m}}
+function diodeJump(i){dRunning=false;dHistoryIndex=clamp(i,0,dHistory.length-1);const h=dHistory[dHistoryIndex];if(!h)return;Object.assign(dState,{t:h.t,temp:h.temp,damage:h.damage,failed:h.failed,failReason:h.failReason,m:{...h.m}});Object.assign(dParams,h.params);diodeControlsUpdate()}
+function diodeToggle(){if(!dRunning&&dHistoryIndex<dHistory.length-1)dHistory=dHistory.slice(0,dHistoryIndex+1);dRunning=!dRunning;}
+function dItext(I){const a=Math.abs(I);return a>=1?I.toFixed(2)+' A':a>=1e-3?(I*1e3).toFixed(2)+' mA':a>=1e-6?(I*1e6).toFixed(2)+' µA':(I*1e9).toFixed(2)+' nA'}
+function dMode(m){return m.damaged?'FAILED':m.breakdown?'AVALANCHE':m.vd>.22?'FORWARD':m.reverse?'REVERSE':'EQUILIBRIUM'}
+function dSummary(m){if(m.damaged)return 'Кристалл повреждён в учебной модели. Для нового опыта нажми «Новый прогон».';if(m.breakdown)return 'Обратное смещение превысило учебную оценку пробоя; лавинный ток растёт вместе с мощностью.';if(m.vd>.22)return 'P-область подключена к плюсу. Барьер снижен; электроны из N и дырки из P инжектируются навстречу друг другу.';if(m.reverse)return 'N-область подключена к плюсу. Обеднённая область расширяется; основные носители отходят от перехода.';return 'Диффузионный и дрейфовый потоки почти уравновешены; суммарный ток невелик.'}
+const diodeControlDefs=[
+ {id:'source',label:'Напряжение источника U',min:-120,max:20,step:.1,unit:'В',section:'electric'},
+ {id:'resistance',label:'Последовательный резистор R',min:10,max:3000,step:10,unit:'Ω',section:'electric'},
+ {id:'naExp',label:'Акцепторное легирование P',min:14,max:19,step:.1,unit:'см⁻³',section:'doping',exp:true},
+ {id:'ndExp',label:'Донорное легирование N',min:14,max:19,step:.1,unit:'см⁻³',section:'doping',exp:true},
+ {id:'area',label:'Площадь перехода',min:.1,max:8,step:.1,unit:'мм²',section:'doping'},
+ {id:'ambient',label:'Температура среды',min:-10,max:90,step:1,unit:'°C',section:'doping'}
+];
+function dControlMarkup(d){const s=`d_${d.id}`;return `<div class="ctrl" data-dparam="${d.id}"><div class="ctrl-head"><label for="${s}">${d.label}</label><output id="dout_${d.id}" class="scientific"></output></div><div class="precision-row"><button class="step-btn" type="button" data-dstep="-1" aria-label="Уменьшить ${d.label}">−</button><input class="precise-input" id="dnum_${d.id}" inputmode="decimal" aria-label="Ввод: ${d.label}"><span class="unit">${d.unit}</span><button class="step-btn" type="button" data-dstep="1" aria-label="Увеличить ${d.label}">+</button></div><div class="safe-range"><input id="${s}" type="range" min="${d.min}" max="${d.max}" step="${d.step}" value="${dParams[d.id]}"><div class="touch-range" aria-hidden="true"></div></div></div>`}
+$('#dElectric').innerHTML=diodeControlDefs.filter(d=>d.section==='electric').map(dControlMarkup).join('');
+$('#dDoping').innerHTML=diodeControlDefs.filter(d=>d.section==='doping').map(dControlMarkup).join('');
+function diodeControlsUpdate(){for(const d of diodeControlDefs){const v=dParams[d.id],num=$('#dnum_'+d.id),range=$('#d_'+d.id);if(document.activeElement!==num)num.value=d.exp?(10**v).toExponential(3):String(Number(v.toFixed(3)));if(document.activeElement!==range)range.value=v;$('#dout_'+d.id).textContent=d.exp?sciText(v,2):`${Number(v.toFixed(2))} ${d.unit}`}}
+function diodeSetParam(id,v){const d=diodeControlDefs.find(d=>d.id===id);if(!d||!Number.isFinite(v))return;if(!dRunning&&dHistoryIndex<dHistory.length-1)dHistory=dHistory.slice(0,dHistoryIndex+1);dParams[id]=clamp(Math.round(v/d.step)*d.step,d.min,d.max);dState.m=diodeCalc(dParams,dState);if(!dRunning&&dHistoryIndex>=0&&dHistory[dHistoryIndex]){const h=dHistory[dHistoryIndex];h.params={...dParams};h.m={...dState.m};h.temp=dState.temp;h.failed=dState.failed;}diodeControlsUpdate();}
+for(const d of diodeControlDefs){const range=$('#d_'+d.id),num=$('#dnum_'+d.id),wrap=range.closest('.safe-range'),touch=wrap.querySelector('.touch-range');
+ range.addEventListener('input',e=>diodeSetParam(d.id,+e.target.value));
+ num.addEventListener('change',()=>{let n=Number(num.value.trim().replace(',','.'));if(Number.isFinite(n)&&(!d.exp||n>0))diodeSetParam(d.id,d.exp?log10(n):n);else diodeControlsUpdate()});
+ num.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();num.blur()}});
+ num.closest('.ctrl').querySelectorAll('[data-dstep]').forEach(btn=>btn.addEventListener('click',()=>diodeSetParam(d.id,dParams[d.id]+Number(btn.dataset.dstep)*d.step)));
+ // Match the v0.6 intentional slider grab behaviour: vertical page scroll must remain possible.
+ let pointer=null;const geom=()=>{let r=wrap.getBoundingClientRect(),x=r.left+(dParams[d.id]-d.min)/(d.max-d.min)*r.width;return {r,x}};
+ touch.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')return;const g=geom();pointer={id:e.pointerId,x:e.clientX,y:e.clientY,active:false,vertical:false,near:Math.abs(e.clientX-g.x)<30}},{passive:true});
+ touch.addEventListener('pointermove',e=>{if(!pointer||pointer.id!==e.pointerId)return;const dx=e.clientX-pointer.x,dy=e.clientY-pointer.y,dist=Math.hypot(dx,dy);if(!pointer.active&&!pointer.vertical){if(pointer.near&&dist>3&&Math.abs(dx)>.45*Math.abs(dy)||!pointer.near&&dist>7&&Math.abs(dx)>.85*Math.abs(dy))pointer.active=true;else if(dist>8&&Math.abs(dy)>Math.abs(dx)*1.2)pointer.vertical=true;if(pointer.active){wrap.classList.add('grabbed');try{touch.setPointerCapture(e.pointerId)}catch(_){}}}if(pointer.active){e.preventDefault();const r=geom().r;diodeSetParam(d.id,d.min+clamp((e.clientX-r.left)/r.width,0,1)*(d.max-d.min))}},{passive:false});
+ const stop=e=>{if(!pointer||pointer.id!==e.pointerId)return;pointer=null;wrap.classList.remove('grabbed');try{touch.releasePointerCapture(e.pointerId)}catch(_){}};touch.addEventListener('pointerup',stop);touch.addEventListener('pointercancel',stop);
+ }
+
+const dMetrics={
+ I:['Ток диода I_D','Упрощённое уравнение диода с внешним резистором','I ≈ I_s·(exp(U_D/(nV_T))−1); U_ист = U_D + IR','Ток определяется полярностью, температурой и ограничен цепью с резистором.'],
+ vd:['Напряжение U_D','Напряжение именно на переходе','U_ист = U_D + I_D·R','Не путай напряжение источника с напряжением на диоде.'],
+ W:['Ширина обеднённой области W','Область вокруг p–n границы с малым количеством подвижных носителей','W ≈ √[(2ε_Si/q)(1/N_A+1/N_D)(V_bi−U_D)]','Формула резкого перехода применима при приближении обеднённого слоя.'],
+ Wp:['W_P — часть в P','Ширина области пространственного заряда на P-стороне','W_P = W·N_D/(N_A+N_D)','При более слабом легировании P эта часть расширяется.'],
+ Wn:['W_N — часть в N','Ширина области пространственного заряда на N-стороне','W_N = W·N_A/(N_A+N_D)','При более слабом легировании N эта часть расширяется.'],
+ E:['Максимальная напряжённость поля','Сила на положительный пробный заряд направлена N → P','|E|max ≈ q·N_A·W_P/ε_Si','На электрон сила действует противоположно направлению поля.'],
+ vbi:['Встроенный потенциал','Равновесный диффузионный барьер','V_bi ≈ V_T·ln(N_A N_D/n_i²)','Модель использует фиксированную оценку собственной концентрации n_i.'],
+ vbr:['Оценка напряжения пробоя','Грубая учебная модель обратного пробоя','V_BR ≈ f(N_A,N_D)','Не паспортная величина: не моделирует подробно лавинную и туннельную ионизацию.'],
+ temp:['Температура перехода','Тепловая динамика зависит от мощности на самом диоде','ΔT ≈ P_D·R_θ','В модели тепловое сопротивление зависит от площади, пороги отказа условные.'],
+ power:['Рассеиваемая мощность','Электрическая мощность на диоде преобразуется преимущественно в тепло','P_D ≈ |U_D·I_D|','Тепло в последовательном резисторе учитывается отдельно и здесь не показано.']
+};
+function diodeMetricValue(k,m){if(k==='I')return dItext(m.I);if(k==='vd')return m.vd.toFixed(3)+' V';if(k==='W')return m.W.toFixed(3)+' µm';if(k==='Wp')return m.Wp.toFixed(3)+' µm';if(k==='Wn')return m.Wn.toFixed(3)+' µm';if(k==='E')return m.E.toExponential(2)+' V/cm';if(k==='vbi')return m.vbi.toFixed(3)+' V';if(k==='vbr')return m.vbr.toFixed(1)+' V';if(k==='temp')return m.temp.toFixed(1)+' °C';return m.power<.001?(m.power*1000).toFixed(2)+' mW':m.power.toFixed(3)+' W'}
+$$('[data-dmetric]').forEach(b=>b.addEventListener('click',()=>{const k=b.dataset.dmetric,m=diodeView().m,h=dMetrics[k];openSheet('ПАРАМЕТР · ДИОД',h[0],`<div class="current-box"><b>Сейчас:</b> ${diodeMetricValue(k,m)}</div><h3>Физический смысл</h3><p>${h[1]}</p><div class="formula-box"><div class="formula-content"><div class="formula-main">${h[2]}</div></div></div><p>${h[3]}</p><p class="explain-tip">Диодный Physics Core — учебное приближение, не TCAD/SPICE.</p>`)}));
+const dHelp={
+ p:['P-область · анод','Акцепторное легирование делает дырки основными носителями. При прямом смещении дырки инжектируются в N-область.'],
+ n:['N-область · катод','Донорное легирование делает электроны основными носителями. При прямом смещении часть электронов диффундирует в P-область.'],
+ junction:['Граница P–N','Граница областей — не вся обеднённая область. Пространственный заряд распределён по обе стороны.'],
+ depletion:['Обеднённая область','Вблизи p–n-границы мало основных подвижных носителей, остаются неподвижные ионы примесей. В обратном смещении область шире.'],
+ electron:['Электрон','Электрон имеет отрицательный заряд. При прямом смещении электроны из N диффундируют в P и могут рекомбинировать. Частица на схеме — наглядный маркер, не измеренный трек.'],
+ hole:['Дырка / вакансия','Дырка — свободное состояние в валентной зоне, которое ведёт себя как положительный носитель. Под действием поля направление силы совпадает с полем.'],
+ ion:['Фиксированный ион','Ион примеси закреплён в кристаллической решётке: на P-стороне знак −, на N-стороне +. Эти заряды формируют внутреннее поле.'],
+ field:['Электрическое поле','В области p–n-перехода поле направлено от N к P. Электрон испытывает силу против поля, дырка — по полю.'],
+ hotspot:['Тепло на переходе','Мощность на диоде ≈ |U_D·I_D|. Рост тепловой нагрузки увеличивает температуру; порог отказа в модели учебный.']
+};
+function diodeExplain(id){const [title,body]=dHelp[id]||dHelp.junction,m=diodeView().m;$('#diodeExplainCard').innerHTML=`<h3>${title}</h3><p>${body}</p><div class="current-box">U_D: <b>${m.vd.toFixed(3)} V</b> · I_D: <b>${dItext(m.I)}</b> · W: <b>${m.W.toFixed(3)} µm</b></div>`}
+function diodeSelectAt(sx,sy){let found=null;for(const o of app.hitObjects){const pos=worldToScreen(o.x,o.y),d=Math.hypot(sx-pos.x,sy-pos.y);if(d<Math.max(22,o.r*camera.zoom)&&(!found||(o.priority??50)*4-d>found.score))found={o,score:(o.priority??50)*4-d}}if(!found){diodeSelection=null;app.selected=null;$('#explainCallout').hidden=true;return}
+ diodeSelection=found.o;app.selected=found.o;const id=found.o.meta?.dkey||(['field-arrow','field-line','field-eb','field-bc'].includes(found.o.type)?'field':'junction');if(id==='electron'||id==='hole')dRunning=false;diodeExplain(id);$('#explainCallout').hidden=false;$('#explainCallout').innerHTML=`<b>${dHelp[id]?.[0]||'Переход'}</b><span>выбрано · нажми метрику для формулы</span>`}
+const diodeTaskDefs=[
+ ['Прямое смещение','Добейся I_D > 10 mA.',m=>m.I>.01,'Положительный U источника и ограничивающий резистор.',{source:-8}],
+ ['Расширь переход','Добейся W > 2 µm, не вызывая пробоя.',m=>m.W>2&&!m.breakdown,'Обратное смещение и/или менее сильное легирование.',{source:5,naExp:18,ndExp:18}],
+ ['Уменьши нагрев','P_D < 0.1 W при прямом токе > 5 mA.',m=>m.power<.1&&m.I>.005,'Меняй источник и сопротивление; следи за P_D.',{source:20,resistance:10}],
+ ['Запас по пробою','При U источника < 0 добейся |U_D|/V_BR < 50%.',m=>dParams.source<0&&Math.abs(m.vd)/m.vbr<.5,'Уменьшай обратное напряжение либо корректируй легирование.',{source:-105,resistance:70}]
+];
+$('#diodeTasks').innerHTML=diodeTaskDefs.map((t,i)=>`<button class="btn task-pick" data-dtask="${i}"><b>${i+1}. ${t[0]}</b><small>${t[1]}</small></button>`).join('');
+$$('[data-dtask]').forEach(b=>b.addEventListener('click',()=>{dSelectedTask=+b.dataset.dtask;Object.assign(dParams,diodeDefaults,diodeTaskDefs[dSelectedTask][4]);diodeReset();diodeTaskUpdate()}));
+function diodeTaskUpdate(){if(dSelectedTask<0)return;const t=diodeTaskDefs[dSelectedTask],m=diodeView().m,ok=t[2](m);$$('[data-dtask]').forEach(b=>b.classList.toggle('active',+b.dataset.dtask===dSelectedTask));const el=$('#diodeTaskResult');el.classList.toggle('good',ok);el.innerHTML=`<b>${ok?'✓ Выполнено':'Условие пока не выполнено'}</b><br>${t[1]}<br>I_D ${dItext(m.I)} · U_D ${m.vd.toFixed(2)} V · W ${m.W.toFixed(2)} µm · P ${m.power.toFixed(3)} W<br><span class="explain-tip">${ok?'Теперь сравни с исходным режимом.':t[3]}</span>`}
+$$('[data-dpreset]').forEach(b=>b.addEventListener('click',()=>{Object.assign(dParams,dPresets[b.dataset.dpreset]);diodeReset();diodeSetFocus('all')}));
+$('#dNewRun').addEventListener('click',diodeReset);$('#dFactory').addEventListener('click',()=>{Object.assign(dParams,diodeDefaults);diodeReset();diodeSetFocus('all')});
+function updateDiodeMode(){for(const [name,el] of [['explain','#diodeIntroExplain'],['tasks','#diodeIntroTasks'],['experiment','#diodeIntroExperiment']])$(el).classList.toggle('active',app.mode===name);}
+function diodeSetFocus(which){camera.targetCx=640;camera.targetCy=265;camera.targetZoom=which==='pn'?4:1;camera.cx=camera.targetCx;camera.cy=camera.targetCy;camera.zoom=camera.targetZoom;clampCamera();updateZoomButtons()}
+function switchDevice(next){if(next===activeDevice)return;
+ if(activeDevice==='npn'){savedNpnCamera={...camera};savedNpnSelection={selected:app.selected,key:app.selectedKey};}
+ else savedDiodeCamera={...camera};
+ activeDevice=next;document.body.dataset.device=next;
+ $$('[data-device]').forEach(b=>{b.classList.toggle('active',b.dataset.device===next);b.setAttribute('aria-pressed',String(b.dataset.device===next))});
+ $('#deviceSubtitle').textContent=next==='npn'?'Интерактивная учебная лаборатория NPN · Physics Core → Visual Physics Layer':'Интерактивная учебная лаборатория p–n-диода · Physics Core → Visual Physics Layer';
+ const eb=$('[data-center="eb"]'),bc=$('[data-center="bc"]');eb.textContent=next==='npn'?'E–B':'P–N';bc.hidden=next==='diode';
+ if(next==='diode') {Object.assign(camera,savedDiodeCamera||{zoom:1,targetZoom:1,cx:640,cy:265,targetCx:640,targetCy:265});app.selected=diodeSelection;diodeControlsUpdate();}
+ else {Object.assign(camera,savedNpnCamera||{zoom:1,targetZoom:1,cx:640,cy:265,targetCx:640,targetCy:265});app.selected=savedNpnSelection?.selected||null;app.selectedKey=savedNpnSelection?.key||null;updateUI();}
+ $('#explainCallout').hidden=true;updateDiodeMode();requestAnimationFrame(syncDesktopPanels);
+}
+$$('[data-device]').forEach(b=>b.addEventListener('click',()=>switchDevice(b.dataset.device)));
+// Mark original NPN panels/controls: display only for the NPN device. Shared visual controls remain visible.
+for(const id of ['#modeIntroExplain','#modeIntroTasks','#modeIntroExperiment'])$(id).classList.add('npn-only');
+for(const child of $$('.side-card > .section, .side-card > .footnote'))if(!child.classList.contains('diode-only')&&!child.classList.contains('visual-section'))child.classList.add('npn-only');
+// Original timeline/toolbar buttons remain: intercept their events only when the diode is selected.
+function dHandleTimeline(e){if(activeDevice!=='diode')return;const el=e.currentTarget;e.stopImmediatePropagation();if(e.type==='input'&&el.id==='scrub')diodeJump(+el.value);else if(e.type==='input'&&el.id==='speedCtl')dSpeed=10**(+el.value);else if(el.id==='playBtn')diodeToggle();else if(el.id==='backBtn')diodeJump(dHistoryIndex-1);else if(el.id==='forwardBtn')diodeJump(dHistoryIndex+1);else if(el.id==='branchBtn'){if(dHistoryIndex<dHistory.length-1)dHistory=dHistory.slice(0,dHistoryIndex+1);dRunning=true}else if(el.id==='newRunBtn')diodeReset();}
+for(const id of ['playBtn','backBtn','forwardBtn','branchBtn','newRunBtn','scrub','speedCtl']){const el=$('#'+id);el.addEventListener(id==='scrub'||id==='speedCtl'?'input':'click',dHandleTimeline,true)}
+for(const which of ['all','eb','bc'])$(`[data-center="${which}"]`).addEventListener('click',e=>{if(activeDevice!=='diode')return;e.stopImmediatePropagation();diodeSetFocus(which==='all'?'all':'pn')},true);
+function diodeHelpHTML(){
+ const m=diodeView().m;
+ return `<div class="help-nav">
+ <button data-help-jump="what">Что это</button><button data-help-jump="purpose">Зачем нужен</button>
+ <button data-help-jump="examples">Примеры</button><button data-help-jump="pins">P / N</button>
+ <button data-help-jump="modes">Режимы</button><button data-help-jump="params">Параметры</button>
+ <button data-help-jump="danger">Ограничения</button></div>
+ <section id="help-what"><h3>Что такое диод</h3>
+ <p>Диод — это электронный элемент с двумя выводами. Обычный кремниевый p–n-диод <b>хорошо проводит ток в одном направлении и почти не проводит в другом</b> в пределах своих рабочих режимов.</p>
+ <p>У него есть <b>анод (A)</b>, соединённый с P-областью, и <b>катод (K)</b>, соединённый с N-областью. У настоящего диода катод обычно обозначают полоской на корпусе.</p>
+ <p class="help-highlight"><b>Запомнить проще всего так:</b> если анод подключён к более положительному потенциалу, чем катод, диод можно открыть. Но он не идеальный выключатель: напряжение и ток связаны плавной нелинейной характеристикой.</p>
+ </section>
+ <section id="help-purpose"><h3>Для чего нужен диод</h3>
+ <p>Представь обратный клапан, который пропускает воду преимущественно в одну сторону. Диод делает нечто похожее <b>с электрическим током</b>. Это только аналогия: в реальном диоде есть падение напряжения, небольшой обратный ток и предельные режимы.</p>
+ <div class="definition-grid">
+ <div class="definition-card"><b>Выпрямление</b>Помогает превращать переменный ток в ток одного направления — это один из этапов работы некоторых блоков питания.</div>
+ <div class="definition-card"><b>Защита от переполюсовки</b>Может не дать току пройти в опасном направлении, если батарейку подключили наоборот. Схема защиты бывает разной.</div>
+ <div class="definition-card"><b>Защита от выбросов</b>Диод может дать току катушки безопасный путь, когда отключают реле или небольшой электромагнит.</div>
+ <div class="definition-card"><b>Обработка сигналов</b>Позволяет выделять одну полуволну сигнала, ограничивать напряжение или переключать сигнальные цепи.</div>
+ </div>
+ <p class="help-muted">Светодиод (LED) и стабилитрон — тоже разновидности диодов, но со своими особенностями. Текущий кристалл Silicon Lab изображает <b>обычный кремниевый p–n-диод</b>, а не светодиод или стабилитрон.</p>
+ </section>
+ <section id="help-examples"><h3>Примеры, которые легко представить</h3>
+ <div class="help-example"><strong>Пример 1. Батарейку вставили наоборот</strong>
+ <div class="help-flow"><span>Батарейка</span><i>→</i><span>Защитный диод</span><i>→</i><span>Устройство</span></div>
+ <p>В простой последовательной защите диод может пропустить ток при правильном подключении и закрыться при обратном. При этом в правильном направлении часть напряжения теряется на диоде. Не всякая защита устроена именно так.</p></div>
+ <div class="help-example"><strong>Пример 2. Сделать ток одного направления</strong>
+ <div class="help-flow"><span>Переменное напряжение</span><i>→</i><span>Диод</span><i>→</i><span>Односторонние импульсы</span></div>
+ <p>Переменное напряжение меняет полярность. Один диод может пропускать преимущественно одну полуволну и задерживать другую. На выходе получится ещё не ровное постоянное напряжение, а пульсирующее. Для сглаживания нужны другие детали.</p></div>
+ <div class="help-example"><strong>Пример 3. Выключили катушку реле</strong>
+ <div class="help-flow"><span>Катушка</span><i>→</i><span>Импульс при отключении</span><i>→</i><span>Защитный диод</span></div>
+ <p>Когда ток через катушку резко прерывают, она стремится сохранить его и может создать скачок напряжения. Правильно подключённый защитный диод предоставляет путь для затухающего тока и защищает управляющий транзистор. При обычной работе такой диод, как правило, закрыт.</p></div>
+ <h3>Попробуй прямо здесь</h3>
+ <p>Выбери один из экспериментов. После выбора окно справки закроется, а <b>сам кристалл останется в прежнем поле микроскопа</b>.</p>
+ <div class="sheet-actions"><button class="btn good" data-dhelp-preset="forward">Прямое смещение</button><button class="btn" data-dhelp-preset="reverse">Обратное смещение</button><button class="btn warn" data-dhelp-preset="avalanche">Исследовать пробой</button></div>
+ </section>
+ <section id="help-pins"><h3>Что находится внутри диода</h3>
+ <div class="definition-grid">
+ <div class="definition-card"><b>P — анод</b>Область с акцепторной примесью; основные подвижные носители здесь — дырки.</div>
+ <div class="definition-card"><b>N — катод</b>Область с донорной примесью; основные подвижные носители — электроны.</div>
+ <div class="definition-card"><b>p–n-переход</b>Граница двух областей и образовавшаяся вокруг неё область пространственного заряда.</div>
+ <div class="definition-card"><b>Обеднённая область</b>Внутри неё мало основных подвижных носителей и остаются заряженные, неподвижные центры примеси.</div>
+ </div>
+ <div class="sheet-actions"><button class="btn" data-dhelp="p">P-область</button><button class="btn" data-dhelp="n">N-область</button><button class="btn" data-dhelp="depletion">Обеднённая область</button><button class="btn" data-dhelp="field">Электрическое поле</button></div>
+ </section>
+ <section id="help-modes"><h3>Как работает диод в разных режимах</h3>
+ <h3>1. Без внешнего напряжения</h3><p>Часть электронов и дырок сначала перемещается через границу. Возникают неподвижные ионы примеси и внутреннее поле, которое противодействует дальнейшей диффузии. В равновесии результирующий ток через переход равен нулю.</p>
+ <h3>2. Прямое смещение: плюс к аноду P</h3><p>Внешнее напряжение уменьшает потенциальный барьер перехода. Носители легче проходят границу; ток растёт очень быстро с увеличением напряжения на диоде. Для обычного кремниевого диода при заметном токе часто говорят примерно о 0,6–0,8 В, но это <b>не универсальный порог</b> и зависит от тока, температуры и типа диода.</p>
+ <h3>3. Обратное смещение: плюс к катоду N</h3><p>Барьер возрастает, обеднённая область расширяется. Основные носители отводятся от границы. Маленький обратный ток остаётся — в том числе благодаря неосновным носителям.</p>
+ <h3>4. Сильное обратное напряжение</h3><p>При достаточно сильном поле возможен обратный пробой и резкий рост тока. <b>Сам по себе пробой не всегда означает разрушение:</b> многое зависит от ограничения тока, тепловыделения и конструкции диода. В нашей модели повреждение рассчитывается отдельно и условно.</p>
+ <div class="help-example"><strong>Проверка понимания</strong><p>Почему при прямом смещении область пространственного заряда становится уже? Потому что внешний источник уменьшает внутренний барьер. А при обратном — помогает внутреннему полю и расширяет область.</p></div>
+ </section>
+ <section id="help-params"><h3>Какие величины показывает Silicon Lab</h3>
+ <p><b>U источника</b> — напряжение внешней батареи или источника; <b>R</b> — ограничивающий резистор; <b>U<sub>D</sub></b> — напряжение именно на диоде; <b>I<sub>D</sub></b> — ток через диод. Не путай U источника и U<sub>D</sub>: часть напряжения может приходиться на резистор.</p>
+ <p><b>W</b> — ширина обеднённой области; <b>W<sub>P</sub></b> и <b>W<sub>N</sub></b> — её части на разных сторонах; <b>E</b> — напряжённость поля; <b>V<sub>bi</sub></b> — встроенный потенциал; <b>V<sub>BR</sub></b> — учебная оценка пробоя; <b>P<sub>D</sub></b> и <b>T</b> — нагрев.</p>
+ <div class="current-box"><b>Состояние сейчас:</b><br>U источника = <b>${dParams.source.toFixed(1)} В</b>; R = <b>${dParams.resistance.toFixed(0)} Ω</b><br>U<sub>D</sub> = <b>${m.vd.toFixed(3)} В</b>; I<sub>D</sub> = <b>${dItext(m.I)}</b><br>W = <b>${m.W.toFixed(3)} µm</b>; T = <b>${m.temp.toFixed(1)} °C</b></div>
+ <p>Нажимай на плитки показателей под микроскопом. Для каждой открываются назначение, зависимость, формула и текущая величина.</p>
+ </section>
+ <section id="help-danger"><h3>Что важно помнить</h3>
+ <p>В нашем учебном опыте диод соединён с внешним источником <b>через резистор</b>. Без ограничения тока модель прямого смещения может давать слишком большой ток, а реальный элемент — сильно перегреваться. Здесь управление безопасно: всё происходит внутри браузера.</p>
+ <p><b>Температура влияет на ток.</b> Диоды чувствительны к нагреву: при фиксированном токе прямое напряжение обычно уменьшается с повышением температуры. В модели учтены только некоторые температурные зависимости.</p>
+ <p><b>Математика учебная.</b> Диффузия, поле, обратный пробой, тепловыделение и частицы показаны наглядно, но это не TCAD/SPICE и не паспорт конкретного диода. Отдельная движущаяся точка — визуальный маркер, а не рассчитанная траектория одного реального электрона.</p>
+ </section>
+ <button class="btn physics-toggle" data-help-deep>Подробнее о физике</button>
+ <section id="help-deep" class="deep-physics" hidden>
+ <h3>Почему вообще возникает p–n-переход</h3>
+ <p><b>Диффузия.</b> На N-стороне много свободных электронов, на P-стороне — дырок. Вблизи границы носители стремятся распределиться по концентрации: электроны переходят из N в P, дырки — из P в N. Часть носителей рекомбинирует.</p>
+ <p><b>Пространственный заряд.</b> Ушедшие подвижные носители оставляют неподвижные заряженные центры: на N-стороне положительные доноры, на P-стороне отрицательные акцепторы. Возникает область пространственного заряда и внутреннее поле N → P.</p>
+ <p><b>Равновесие.</b> Поле действует на электроны против направления поля, а на дырки — по полю. В отсутствие внешнего смещения диффузионная и дрейфовая составляющие тока компенсируются. При этом внутри кристалла сохраняются тепловое движение и микроскопические процессы — «ток равен нулю» не означает, что носители замерли.</p>
+ <h3>Что меняет внешнее напряжение</h3>
+ <p>Прямое смещение снижает барьер для основных носителей и способствует их инжекции. После прохождения границы электроны оказываются неосновными носителями в P-области, а дырки — в N-области; далее они распространяются и рекомбинируют. Обратное смещение увеличивает барьер для основных носителей, но не устраняет ток неосновных носителей.</p>
+ <h3>Как связаны формулы и ползунки</h3>
+ <div class="formula-main">U<sub>ист</sub> = U<sub>D</sub> + I<sub>D</sub>·R</div>
+ <p>Это закон напряжений для нашего последовательного соединения «резистор + диод». Именно он объясняет, почему напряжение источника и напряжение на переходе различаются.</p>
+ <div class="formula-main">I<sub>D</sub> ≈ I<sub>S</sub>(e<sup>U<sub>D</sub>/(nV<sub>T</sub>)</sup> − 1)</div>
+ <p>Приближённая диодная характеристика: <b>I<sub>S</sub></b> — ток насыщения модели, <b>n</b> — коэффициент идеальности, <b>V<sub>T</sub> = kT/q</b> — тепловое напряжение. В режиме обратного пробоя простая формула Шокли недостаточна, поэтому лаборатория использует отдельное условное приближение.</p>
+ <div class="formula-main">V<sub>bi</sub> ≈ V<sub>T</sub> ln(N<sub>A</sub>N<sub>D</sub>/n<sub>i</sub>²)</div>
+ <p>Встроенный потенциал зависит от легирования и температуры. <b>N<sub>A</sub></b> — концентрация акцепторов в P, <b>N<sub>D</sub></b> — концентрация доноров в N, <b>n<sub>i</sub></b> — собственная концентрация носителей.</p>
+ <div class="formula-main">W ≈ √[(2ε<sub>Si</sub>/q)(1/N<sub>A</sub> + 1/N<sub>D</sub>)(V<sub>bi</sub> − U<sub>D</sub>)]</div>
+ <p>Это формула для <b>идеализированного резкого перехода</b> в приближении обеднения. Она показывает, почему уменьшение концентрации примеси или рост обратного смещения расширяет область. В сильном прямом режиме формула перестаёт быть точной; в лаборатории результат ограничивается снизу.</p>
+ <div class="formula-main">W<sub>P</sub> / W<sub>N</sub> = N<sub>D</sub> / N<sub>A</sub></div>
+ <p>Пространственный заряд должен компенсироваться: обеднённая область дальше уходит в более слабо легированную сторону. Поэтому при разных концентрациях P- и N-части имеют разную ширину.</p>
+ <div class="formula-main">P<sub>D</sub> ≈ |U<sub>D</sub>·I<sub>D</sub>|</div>
+ <p>Мощность на самом диоде переходит главным образом в тепло. Нагрев внешнего резистора — отдельная часть потерь (<b>I<sub>D</sub>²R</b>).</p>
+ <h3>Обратный пробой бывает разным</h3>
+ <p><b>Лавинный механизм</b> связан с ударной ионизацией в сильном поле. <b>Туннельный (зенеровский)</b> возможен в сильно легированных тонких переходах. Для реального диода вклад механизмов зависит от конструкции. В Silicon Lab точный механизм не вычисляется: это учебный обобщённый режим пробоя.</p>
+ <p class="help-note">Формулы в разделе объясняют тенденции, но не предназначены для расчёта реальной детали без проверки условий применимости. Следующий этап развития диода — более точная физика и расширение интерактивных объяснений.</p>
+ </section>
+ <div class="sheet-actions"><button class="btn" data-dhelp="junction">Показать переход</button><button class="btn" data-dhelp="electron">Электрон</button><button class="btn" data-dhelp="hole">Дырка</button><button class="btn" data-dhelp="ion">Ион примеси</button></div>`;
+}
+$('#helpBtn').addEventListener('click',e=>{if(activeDevice!=='diode')return;e.stopImmediatePropagation();openSheet('СПРАВКА · ЭЛЕМЕНТ','Кремниевый p–n-диод',diodeHelpHTML())},true);
+$('#sheetBody').addEventListener('click',e=>{const b=e.target.closest('[data-dhelp]');if(b&&activeDevice==='diode'){const id=b.dataset.dhelp;const h=dHelp[id];openSheet('СПРАВКА · ДИОД',h[0],`<p>${h[1]}</p><div class="current-box"><b>Сейчас:</b> U_D=${dState.m.vd.toFixed(3)} В · W=${dState.m.W.toFixed(3)} µm</div><div class="sheet-actions"><button class="btn" data-dhelp-back>← К полной справке</button></div>`)}});
+$('#sheetBody').addEventListener('click',e=>{
+ if(activeDevice!=='diode')return;
+ if(e.target.closest('[data-dhelp-back]')){openSheet('СПРАВКА · ЭЛЕМЕНТ','Кремниевый p–n-диод',diodeHelpHTML());return;}
+ const b=e.target.closest('[data-dhelp-preset]');if(!b)return;
+ const preset=dPresets[b.dataset.dhelpPreset];if(!preset)return;
+ Object.assign(dParams,preset);diodeReset();diodeSetFocus('all');setMode('experiment');closeSheet();
+});
+window.addEventListener('keydown',e=>{if(activeDevice!=='diode'||e.target.closest('input,textarea,button'))return;if(e.code==='Space'){e.preventDefault();e.stopImmediatePropagation();diodeToggle()}else if(e.code==='ArrowLeft'||e.code==='ArrowRight'){e.preventDefault();e.stopImmediatePropagation();diodeJump(dHistoryIndex+(e.code==='ArrowRight'?1:-1))}},true);
+function diodeFrame(dt){if(dRunning){let remain=dt*dSpeed;while(remain>0){const part=Math.min(.025,remain);diodeAdvance(part);remain-=part;}dAccumulator+=dt*dSpeed;while(dAccumulator>=1/30){diodeRecord();dAccumulator-=1/30;}}cameraStep();diodeRender(diodeView());diodeUpdateUI(diodeView())}
+$('#dCauseChain').addEventListener('click',e=>{const b=e.target.closest('[data-dcause]');if(!b)return;const k=b.dataset.dcause,m=diodeView().m;if(k==='source'){openSheet('ПРИЧИННО-СЛЕДСТВЕННАЯ ЦЕПЬ','Источник и ограничивающий резистор',`<p>Источник задаёт напряжение ${dParams.source.toFixed(1)} V, а последовательный резистор ограничивает ток.</p><div class="formula-main">U_ист = U_D + I_D·R</div>`);return;}const h=dMetrics[k];openSheet('ПРИЧИННО-СЛЕДСТВЕННАЯ ЦЕПЬ',h[0],`<p>${h[1]}</p><div class="formula-main">${h[2]}</div><p>${h[3]}</p><div class="current-box">${diodeMetricValue(k,m)}</div>`)});
+function diodeUpdateUI(view){const m=view.m,values={dI:'I',dVD:'vd',dW:'W',dWP:'Wp',dWN:'Wn',dE:'E',dVBI:'vbi',dVBR:'vbr',dT:'temp',dP:'power'};
+ for(const [id,key] of Object.entries(values))$('#'+id).textContent=diodeMetricValue(key,m);
+ $('#modeBadge').textContent=dMode(m);$('#modeBadge').className='sim-mode'+(m.damaged?' fail':m.breakdown?' warn':' active');
+ $('#diodeNarrative').innerHTML=`<b>${dMode(m)}.</b> ${dSummary(m)}`;
+ $('#dDiagnostic').innerHTML=dSummary(m);
+ $('#dCauseChain').innerHTML=`<button class="cause-event" data-dcause="source">U источника ${view.params.source.toFixed(1)} V</button><span class="cause-arrow"></span><button class="cause-event" data-dcause="vd">U_D ${m.vd.toFixed(3)} V</button><span class="cause-arrow"></span><button class="cause-event" data-dcause="I">I_D ${dItext(m.I)}</button>`;
+ $('#dFailure').hidden=!view.failed;if(view.failed)$('#dFailureText').textContent=view.failReason;
+ $('#scrub').max=Math.max(0,dHistory.length-1);$('#scrub').value=dHistoryIndex;
+ $('#timeRead').textContent=`t = ${view.t.toFixed(3)} s · кадр ${dHistoryIndex+1}/${dHistory.length}`;
+ $('#playBtn').textContent=dRunning?'❚❚':'▶';$('#playBtn').classList.toggle('active',dRunning);
+ $('#speedRead').textContent='×'+(dSpeed>=1?dSpeed.toFixed(dSpeed%1?2:0):dSpeed.toFixed(dSpeed<.01?3:2));
+ if(dSelectedTask>=0&&app.mode==='tasks')diodeTaskUpdate();
+}
+function diodeRender(view){const m=view.m,p=view.params,t=view.t;app.hitObjects=[];
+ paintMicroscopeBackground();
+ const L=92,J=640,R=1188,top=132,bottom=395,cy=(top+bottom)/2;
+ ctx.save();applyTransform();paintCrystalMount(L,R,top,bottom);const hot=clamp((view.temp-80)/180,0,1);
+ ctx.fillStyle=heatColor([102,52,92],view.temp,view.failed);ctx.fillRect(L,top,J-L,bottom-top);
+ ctx.fillStyle=heatColor([24,72,104],view.temp,view.failed);ctx.fillRect(J,top,R-J,bottom-top);
+ ctx.strokeStyle='#d1e0f744';ctx.lineWidth=1.5/camera.zoom;ctx.strokeRect(L,top,R-L,bottom-top);
+ const span=clamp(30+Math.log10(1+m.W)*77,20,280),dp=span*m.Wp/Math.max(1e-9,m.W),dn=span*m.Wn/Math.max(1e-9,m.W),xp=J-dp,xn=J+dn;
+ ctx.fillStyle='#ad90ff25';ctx.fillRect(xp,top,xn-xp,bottom-top);
+ ctx.strokeStyle='#bea2f488';ctx.lineWidth=1.3/camera.zoom;ctx.setLineDash([5/camera.zoom,6/camera.zoom]);for(const x of [xp,xn]){ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,bottom);ctx.stroke()};ctx.setLineDash([]);
+ ctx.strokeStyle='#eff8ff88';ctx.lineWidth=2/camera.zoom;ctx.beginPath();ctx.moveTo(J,top-11);ctx.lineTo(J,bottom+11);ctx.stroke();
+ // In the one microscope: electron/hole symbols, lattice, fixed ions, E arrows/animated lines, zoom and pan are shared with NPN.
+ if(camera.zoom>=8){ctx.save();ctx.globalAlpha=.42;ctx.fillStyle='#cad8f2';for(let x=L+15;x<R-10;x+=22)for(let y=top+13;y<bottom-10;y+=21){ctx.beginPath();ctx.arc(x,y,screenSized(2,4),0,Math.PI*2);ctx.fill()}ctx.restore()}
+ if(visual.fixedIons&&camera.zoom>=1.8){const count=Math.round(7+clamp((camera.zoom-2)/11,0,1)*32);for(const z of [{a:xp,b:J,ch:'−',col:'#ffc078',side:'P'},{a:J,b:xn,ch:'+',col:'#8ee7ff',side:'N'}])for(let i=0;i<count;i++){const x=lerp(z.a+2,z.b-2,hash(i*12.71+(z.side==='P'?150:250))),y=lerp(top+13,bottom-13,hash(i*7.35+(z.side==='P'?55:355)));if(!Number.isFinite(x))continue;ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=z.col;ctx.strokeStyle=z.col;ctx.lineWidth=screenSized(1.2,1.8);ctx.font=`700 ${screenSized(10,16)}px monospace`;const rad=screenSized(7,13);ctx.strokeRect(x-rad,y-rad,rad*2,rad*2);if(camera.zoom>=3.5)ctx.fillText(z.ch,x,y);ctx.restore();registerHit('fixed-ion',x,y,screenSized(9,15),{dkey:'ion',side:z.side,sign:z.ch})}}
+ const strength=clamp(m.E/5e5,.15,1.3);
+ if(visual.fieldStyle==='arrows')drawFieldArrows(xp,xn,{yTop:top,yBot:bottom},strength,'left','P–N');else drawFieldLines(xp,xn,{yTop:top,yBot:bottom},strength,'left',t,'P–N');
+ const dots=Math.round(14+clamp(Math.log10(1+Math.abs(m.I)*1e5)/4,0,1)*120),flow=clamp(Math.log10(1+Math.abs(m.I)*1e5)/4,0,1);
+ for(let i=0;i<dots;i++){const electron=i%2===0,phase=frac(t*(.14+.19*flow)+hash(i*27)+i/dots),isForward=m.vd>.2;
+ let x=electron?lerp(R-12,L+12,phase):lerp(L+12,R-12,phase);
+ if(!isForward){x=electron?lerp(xn+17,R-12,phase):lerp(L+12,xp-17,phase)}
+ const y=lerp(top+15,bottom-15,hash(i*17+45))+Math.sin(t*1.7+i)*2;
+ ctx.save();ctx.globalAlpha=.55+.35*hash(i*3+7);const size=screenSized(4,7);ctx.strokeStyle=electron?'#58dcff':'#ffb45f';ctx.fillStyle=ctx.strokeStyle;ctx.shadowColor=ctx.fillStyle;ctx.shadowBlur=screenSized(6,10)*camera.zoom*.8;ctx.lineWidth=screenSized(2,3);ctx.beginPath();ctx.arc(x,y,size,0,Math.PI*2);electron?ctx.fill():ctx.stroke();ctx.restore();if(camera.zoom>=5.5){registerHit(electron?'electron':'hole',x,y,screenSized(10,15),{dkey:electron?'electron':'hole',id:i});if(camera.zoom>=8&&visual.carrierFields)drawLocalField(x,y,electron?-1:1)}
+ }
+ ctx.fillStyle='#eaf5ff';ctx.font=`700 ${15/Math.sqrt(camera.zoom)}px system-ui`;ctx.textAlign='center';ctx.fillText('P · АНОД',(L+J)/2,top-25/camera.zoom);ctx.fillText('N · КАТОД',(J+R)/2,top-25/camera.zoom);
+ ctx.font=`${11/Math.sqrt(camera.zoom)}px monospace`;ctx.fillStyle='#91a7c8';ctx.fillText(`${sciText(p.naExp,1)}`,(L+J)/2,top-9/camera.zoom);ctx.fillText(`${sciText(p.ndExp,1)}`,(J+R)/2,top-9/camera.zoom);
+ ctx.font=`${10/Math.sqrt(camera.zoom)}px monospace`;ctx.fillText(`W_P ${m.Wp.toFixed(3)} µm`,(xp+J)/2,bottom+22/camera.zoom);ctx.fillText(`W_N ${m.Wn.toFixed(3)} µm`,(J+xn)/2,bottom+22/camera.zoom);
+ if(hot>.01){const gr=ctx.createRadialGradient(J,cy,0,J,cy,140);gr.addColorStop(0,`rgba(255,195,100,${hot*.5})`);gr.addColorStop(1,'rgba(255,50,30,0)');ctx.fillStyle=gr;ctx.fillRect(J-140,cy-140,280,280);registerHit('hotspot',J,cy,25,{dkey:'hotspot'})}
+ if(view.failed){ctx.strokeStyle='#2a0912';ctx.lineWidth=7/camera.zoom;ctx.beginPath();ctx.moveTo(J-34,cy-40);ctx.lineTo(J+15,cy);ctx.lineTo(J-20,cy+35);ctx.stroke()}
+ ctx.fillStyle='#9ca9bb';ctx.fillRect(L-16,cy-30,16,60);ctx.fillRect(R,cy-30,16,60);
+ registerHit('diode-p',(L+J)/2,cy,(J-L)*.38,{dkey:'p',priority:25});registerHit('diode-n',(R+J)/2,cy,(R-J)*.38,{dkey:'n',priority:25});registerHit('diode-depletion',(xp+xn)/2,cy,Math.max(19,(xn-xp)/2),{dkey:'depletion',priority:65});registerHit('diode-junction',J,cy,18,{dkey:'junction',priority:80});
+ ctx.restore();
+ ctx.save();ctx.setTransform(1,0,0,1,0,0);ctx.fillStyle='#07101be6';ctx.strokeStyle='#20344e';ctx.lineWidth=1;ctx.beginPath();ctx.roundRect(15,13,342,84,11);ctx.fill();ctx.stroke();ctx.fillStyle='#e2eefa';ctx.font='700 14px system-ui';ctx.fillText(`p–n ДИОД · ${dMode(m)}`,28,36);ctx.font='11px monospace';ctx.fillStyle='#a9c2dd';ctx.fillText(`U_D ${m.vd.toFixed(2)} V    I_D ${dItext(m.I)}`,28,57);ctx.fillText(`W ${m.W.toFixed(3)} µm    T_j ${view.temp.toFixed(1)}°C`,28,77);ctx.restore();
+ drawSelection();
+}
+
+// Initialize diode state without affecting the original NPN run.
+diodeReset();
+window.__siliconLabDeviceQA={get current(){return activeDevice},switchDevice,diodeCalc,diodeParams:dParams,diodeState:dState,diodeReset,get diodeHistory(){return dHistory.length}};
+
+updateControls();resetRun();centerCamera('all',true);generateTaskPair('basic');renderTaskList();setMode('explain');requestAnimationFrame(syncDesktopPanels);$("#appReady").textContent='READY';document.body.dataset.appReady='1';window.__siliconLab={version:'0.7.2',calcMetrics,params,state,camera,visual,app,selectAt,metricHelp,openSheet,closeSheet,generateTaskPair,validateGeneratedTask,causeEvents,selfTest:()=>({ready:document.body.dataset.appReady==='1',generatedTasks:app.generatedTasks.length,validated:app.generatedTasks.every(t=>t.validated),hasPinch:true,fieldStyles:['arrows','lines'],modes:['explain','tasks','experiment'],baseContact:true,interactiveCauseChain:true,formulas:true,derivedMetrics:['V_CB','V_CB/V_BR'],liveFieldLines:true,metrics:calcMetrics(params,state)})};requestAnimationFrame(loop);
+})();
+
+</script>
+</body>
+</html>
