@@ -110,7 +110,7 @@ body[data-device="diode"] .side-card{scrollbar-color:#375372 #0d1726}
   <header class="app-header">
     <div>
       <h1><span>Silicon Lab</span><sup class="version-mark">v0.7.3</sup></h1>
-      <p><span id="deviceSubtitle">Интерактивная учебная лаборатория NPN · Physics Core → Visual Physics Layer</span></p>
+      <p><span id="deviceSubtitle">Интерактивная учебная лаборатория электроники</span></p>
     </div>
     <div class="header-actions">
       <div class="header-badges"><span>offline</span><span>mouse + touch</span><span>session learning</span></div>
@@ -119,7 +119,7 @@ body[data-device="diode"] .side-card{scrollbar-color:#375372 #0d1726}
   </header>
 
 
-  <nav class="device-tabs" aria-label="Выбор электронного элемента"><button class="device-tab active" data-device="npn" aria-pressed="true">◈ NPN-транзистор <small>эталон</small></button><button class="device-tab" data-device="diode" aria-pressed="false">◉ p–n-диод <small>новый</small></button></nav>
+  <nav class="device-tabs" aria-label="Выбор электронного элемента"><button class="device-tab active" data-device="npn" aria-pressed="true">◈ NPN-транзистор</button><button class="device-tab" data-device="diode" aria-pressed="false">◉ p–n-диод</button></nav>
   <nav class="mode-tabs" aria-label="Режим Silicon Lab">
     <button class="mode-tab active" data-mode="explain">Обучение</button>
     <button class="mode-tab" data-mode="tasks">Задания</button>
@@ -246,7 +246,7 @@ body[data-device="diode"] .side-card{scrollbar-color:#375372 #0d1726}
       </section>
 
       <section class="section"><h3>Быстрые эксперименты</h3><div class="presets">
-        <button class="btn preset" data-preset="normal"><b>Нормальный NPN</b><small>эталон</small></button><button class="btn preset" data-preset="thick"><b>Толстая база</b><small>рекомбинация</small></button>
+        <button class="btn preset" data-preset="normal"><b>Нормальный NPN</b><small>начальные настройки</small></button><button class="btn preset" data-preset="thick"><b>Толстая база</b><small>рекомбинация</small></button>
         <button class="btn preset" data-preset="tiny"><b>Малый коллектор</b><small>hotspot</small></button><button class="btn preset" data-preset="baseHot"><b>Перегрузка базы</b><small>B–E</small></button>
         <button class="btn preset" data-preset="breakdown"><b>Пробой B–C</b><small>лавина</small></button><button class="btn preset" data-preset="weird"><b>Фантастика</b><small>неудачная структура</small></button>
       </div></section>
@@ -281,7 +281,7 @@ body[data-device="diode"] .side-card{scrollbar-color:#375372 #0d1726}
         <div class="ctrl" data-param="ambient" data-control-topic="thermal"><div class="ctrl-head"><label>Температура среды</label></div><div class="precision-row"><button class="step-btn" data-step="-1">−</button><input class="precise-input" inputmode="decimal"><span class="unit">°C</span><button class="step-btn" data-step="1">+</button></div><div class="safe-range"><input id="ambient" type="range" min="-20" max="120" value="25" step="1"><div class="touch-range"></div></div></div>
       </section>
 
-      <section class="section reset-section"><h3>Сбросы</h3><div class="reset-grid"><button id="newRunBtn" class="btn good">Новый прогон</button><button id="factoryBtn" class="btn warn">Стандартный NPN</button></div><small>Новый прогон сохраняет настройки. Стандартный NPN возвращает эталонные параметры после повторного подтверждения.</small></section>
+      <section class="section reset-section"><h3>Сбросы</h3><div class="reset-grid"><button id="newRunBtn" class="btn good">Новый прогон</button><button id="factoryBtn" class="btn warn">Стандартный NPN</button></div><small>Новый прогон сохраняет настройки. Стандартный NPN возвращает стандартные параметры после повторного подтверждения.</small></section>
 
       <section class="section status-section"><h3>Что происходит</h3><div class="legend"><span><i class="dot electron"></i>электроны</span><span><i class="dot hole"></i>вакансии</span><span><i class="dot ion"></i>ионы</span><span><i class="dot recomb"></i>рекомбинация</span></div><div id="diagnostic" class="diagnostic"></div><div id="causeChain" class="cause-chain"></div><div id="failurePanel" class="failure-panel" hidden><h4>Failure analysis</h4><p id="failureText"></p><button id="inspectFailureBtn" class="btn">К моменту перед отказом</button></div></section>
       <p class="footnote">v0.6 — учебная физически согласованная qualitative-модель. Не заменяет SPICE/TCAD и паспорт реального транзистора.</p>
@@ -832,7 +832,7 @@ function switchDevice(next){if(next===activeDevice)return;
  else savedDiodeCamera={...camera};
  activeDevice=next;document.body.dataset.device=next;
  $$('[data-device]').forEach(b=>{b.classList.toggle('active',b.dataset.device===next);b.setAttribute('aria-pressed',String(b.dataset.device===next))});
- $('#deviceSubtitle').textContent=next==='npn'?'Интерактивная учебная лаборатория NPN · Physics Core → Visual Physics Layer':'Интерактивная учебная лаборатория p–n-диода · Physics Core → Visual Physics Layer';
+ $('#deviceSubtitle').textContent='Интерактивная учебная лаборатория электроники';
  const eb=$('[data-center="eb"]'),bc=$('[data-center="bc"]');eb.textContent=next==='npn'?'E–B':'P–N';bc.hidden=next==='diode';
  if(next==='diode') {Object.assign(camera,savedDiodeCamera||{zoom:1,targetZoom:1,cx:640,cy:265,targetCx:640,targetCy:265});app.selected=diodeSelection;diodeControlsUpdate();}
  else {Object.assign(camera,savedNpnCamera||{zoom:1,targetZoom:1,cx:640,cy:265,targetCx:640,targetCy:265});app.selected=savedNpnSelection?.selected||null;app.selectedKey=savedNpnSelection?.key||null;updateUI();}
